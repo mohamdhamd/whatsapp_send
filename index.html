@@ -10,6 +10,13 @@
   <link rel="shortcut icon" href="favicon.png">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   
+  <!-- إعدادات Progressive Web App (PWA) -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#047857">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="بَلِّغْ">
+  
   <!-- خط Cairo الأنيق من Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,6 +24,9 @@
   
   <!-- Font Awesome 6 Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- مكتبة SheetJS لدعم قراءة ملفات الإكسيل (.xlsx و .xls) محلياً -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -146,14 +156,39 @@
 
       <!-- أدوات الرأس السريعة -->
       <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- زر تثبيت التطبيق PWA (يظهر تلقائياً عندما يكون المتصفح جاهزاً) -->
+        <button id="btnInstallPWA" onclick="installPWA()" class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-black rounded-xl text-white bg-gradient-to-r from-emerald-600 to-teal-600 shadow-sm hover:shadow-md transition active:scale-95" title="تثبيت بَلِّغْ كتطبيق على جهازك">
+          <i class="fa-solid fa-download text-xs"></i>
+          <span class="hidden xs:inline">تثبيت التطبيق</span>
+        </button>
+
+        <!-- زر التبديل بين الوضع الليلي والنهاري -->
         <button onclick="toggleDarkMode()" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="تبديل الوضع">
           <i id="themeIcon" class="fa-solid fa-moon text-base"></i>
         </button>
 
+        <!-- زر تصدير النتائج CSV -->
         <button onclick="exportToCSV()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="تصدير الأرقام والحالة إلى ملف CSV">
           <i class="fa-solid fa-file-arrow-down text-emerald-600"></i>
-          <span>تصدير CSV</span>
+          <span class="hidden sm:inline">تصدير CSV</span>
         </button>
+
+        <!-- قائمة النسخ الاحتياطي والاستعادة الكاملة (JSON Backup/Restore) -->
+        <div class="relative inline-block">
+          <button onclick="toggleBackupMenu()" class="p-2 rounded-xl text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="النسخ الاحتياطي والاستعادة (JSON)">
+            <i class="fa-solid fa-database text-xs text-purple-600"></i>
+          </button>
+          <div id="backupDropdown" class="hidden absolute left-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 py-1.5 z-50 text-xs font-bold">
+            <button onclick="exportFullBackupJSON(); toggleBackupMenu();" class="w-full text-right px-3.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2 text-slate-700 dark:text-slate-200 transition">
+              <i class="fa-solid fa-file-arrow-down text-emerald-600"></i>
+              <span>تصدير نسخة احتياطية (JSON)</span>
+            </button>
+            <button onclick="triggerRestoreJSON(); toggleBackupMenu();" class="w-full text-right px-3.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2 text-slate-700 dark:text-slate-200 transition">
+              <i class="fa-solid fa-file-arrow-up text-blue-600"></i>
+              <span>استعادة نسخة احتياطية (JSON)</span>
+            </button>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -450,10 +485,10 @@
               <label class="text-xs font-bold text-slate-700 dark:text-slate-300">
                 الصق قائمة الأرقام والأسماء والملاحظات:
               </label>
-              <label for="fileUploadInput" class="cursor-pointer text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
-                <i class="fa-solid fa-file-arrow-up"></i> رفع ملف (CSV/TXT)
+              <label for="fileUploadInput" class="cursor-pointer text-[11px] font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
+                <i class="fa-solid fa-file-excel text-emerald-500"></i> استيراد ملف (Excel / VCF / CSV)
               </label>
-              <input type="file" id="fileUploadInput" accept=".txt,.csv" onchange="handleFileUpload(event)">
+              <input type="file" id="fileUploadInput" accept=".xlsx,.xls,.csv,.txt,.vcf" onchange="handleFileUpload(event)">
             </div>
 
             <textarea 
@@ -540,9 +575,57 @@
             <span class="hidden md:inline">تصفير الحالات</span>
           </button>
 
+          <button onclick="unsuspendAllInGroup()" class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-amber-200 bg-amber-500/20 hover:bg-amber-500/30 transition" title="إلغاء تعليق جميع الأرقام المعلقة وتفعيلها للإرسال">
+            <i class="fa-solid fa-play"></i>
+            <span class="hidden md:inline">إلغاء تعليق الكل</span>
+          </button>
+
           <button onclick="confirmClearAll()" class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-red-200 bg-red-500/20 hover:bg-red-500/30 transition" title="حذف جميع جهات الاتصال في المجموعة الحالية">
             <i class="fa-solid fa-trash-can"></i>
             <span class="hidden md:inline">مسح المجموعة</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- خيارات الإرسال التلقائي المتتابع بمؤقت (Auto-Runner with Countdown Delay) -->
+      <div class="mt-4 pt-3.5 border-t border-white/20 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        
+        <div class="flex items-center gap-2">
+          <label for="autoDelaySelect" class="text-xs font-bold text-emerald-100 flex items-center gap-1.5 flex-shrink-0">
+            <i class="fa-solid fa-stopwatch text-amber-300"></i> الفاصل الزمني للأمان:
+          </label>
+          <select id="autoDelaySelect" class="text-xs font-bold bg-white/20 text-white rounded-lg px-2.5 py-1.5 border border-white/30 focus:outline-none">
+            <option value="3" class="text-slate-900">3 ثوانٍ (سريع)</option>
+            <option value="5" selected class="text-slate-900">5 ثوانٍ (موصى به لحماية الرقم)</option>
+            <option value="8" class="text-slate-900">8 ثوانٍ (آمن جداً)</option>
+            <option value="12" class="text-slate-900">12 ثانية (حملات كبيرة)</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <!-- شارة العداد الحي أثناء التشغيل -->
+          <div id="autoRunnerStatus" class="hidden text-xs font-mono font-bold bg-black/30 px-3 py-1.5 rounded-xl border border-white/20 text-amber-300 items-center gap-2">
+            <span class="animate-ping w-2 h-2 rounded-full bg-amber-400"></span>
+            <span id="autoRunnerCountdownText">جاري العد...</span>
+          </div>
+
+          <!-- زر تشغيل الإرسال التلقائي -->
+          <button id="btnStartAuto" onclick="startAutoRunner()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md transition active:scale-95">
+            <i class="fa-solid fa-play"></i>
+            <span>تشغيل الإرسال التلقائي</span>
+          </button>
+
+          <!-- زر الإيقاف المؤقت -->
+          <button id="btnPauseAuto" onclick="pauseAutoRunner()" class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/20 hover:bg-white/30 text-white transition">
+            <i class="fa-solid fa-pause"></i>
+            <span>إيقاف مؤقت</span>
+          </button>
+
+          <!-- زر الإنهاء -->
+          <button id="btnStopAuto" onclick="stopAutoRunner()" class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-red-500/80 hover:bg-red-500 text-white transition">
+            <i class="fa-solid fa-stop"></i>
+            <span>إنهاء</span>
           </button>
         </div>
 
@@ -563,10 +646,16 @@
             </span>
           </div>
 
-          <button onclick="exportToCSV()" class="sm:hidden inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800">
-            <i class="fa-solid fa-file-arrow-down text-emerald-600 text-xs"></i>
-            <span>تصدير CSV</span>
-          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="unsuspendAllInGroup()" class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition border border-amber-200/60 dark:border-amber-800/60" title="إلغاء تعليق وتفعيل كافة الأرقام المعلقة في هذه المجموعة">
+              <i class="fa-solid fa-play text-[10px] text-amber-600"></i>
+              <span>إلغاء تعليق الكل</span>
+            </button>
+            <button onclick="exportToCSV()" class="sm:hidden inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800">
+              <i class="fa-solid fa-file-arrow-down text-emerald-600 text-xs"></i>
+              <span>تصدير CSV</span>
+            </button>
+          </div>
         </div>
 
         <!-- البحث وفلتر الحالة في شريط متجاوب بالكامل -->
@@ -1002,6 +1091,9 @@
     }
 
     function switchGroup(groupId) {
+      if (typeof autoRunnerState !== 'undefined' && autoRunnerState.isRunning) {
+        stopAutoRunner(true);
+      }
       activeGroupId = groupId;
       saveGroups();
       renderGroupSelector();
@@ -1049,6 +1141,10 @@
       if (groups.length <= 1) {
         showToast('لا يمكنك حذف المجموعة الوحيدة المتبقية!', 'warning');
         return;
+      }
+
+      if (typeof autoRunnerState !== 'undefined' && autoRunnerState.isRunning) {
+        stopAutoRunner(true);
       }
 
       const current = groups.find(g => g.id === activeGroupId);
@@ -1478,15 +1574,134 @@
       const file = event.target.files[0];
       if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const content = e.target.result;
-        document.getElementById('bulkPasteInput').value = content;
-        updateBulkCountPreview();
-        showToast(`تم تحميل الملف: ${file.name}`, 'info');
-      };
-      reader.readAsText(file, 'UTF-8');
+      const fileName = file.name.toLowerCase();
+
+      // 1. قراءة ملفات الإكسيل (.xlsx و .xls) عبر SheetJS
+      if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+        if (typeof XLSX === 'undefined') {
+          showToast('مكتبة الإكسيل غير محملة بعد، يرجى فحص الاتصال أو استخدام ملف CSV.', 'error');
+          event.target.value = '';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const csvData = XLSX.utils.sheet_to_csv(worksheet);
+
+            if (!csvData || !csvData.trim()) {
+              showToast('ملف الإكسيل فارغ لا يحتوي على بيانات!', 'warning');
+              return;
+            }
+
+            document.getElementById('bulkPasteInput').value = csvData;
+            updateBulkCountPreview();
+            showToast(`تم استيراد بيانات الإكسيل بنجاح (${file.name}). انقر "معالجة وإضافة للأرقام" للاعتماد.`, 'success');
+          } catch (err) {
+            console.error('Excel parse error:', err);
+            showToast('تعذر قراءة ملف الإكسيل! تأكد من صحة الملف.', 'error');
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+      // 2. قراءة ملفات جهات الاتصال vCard (.vcf) وربط الأسماء الذكي
+      else if (fileName.endsWith('.vcf')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const text = e.target.result;
+            const parsedCards = parseVcfToContacts(text);
+            if (parsedCards.length === 0) {
+              showToast('لم يتم العثور على أرقام هواتف صالحة في ملف VCF!', 'warning');
+              return;
+            }
+
+            const defaultCode = document.getElementById('defaultCountryCode').value;
+            let updatedCount = 0;
+            let newLines = [];
+
+            parsedCards.forEach(item => {
+              const norm = normalizePhoneNumber(item.phone, defaultCode);
+              if (norm) {
+                const existing = contacts.find(c => c.groupId === activeGroupId && c.phone === norm);
+                if (existing) {
+                  if (!existing.name && item.name) {
+                    existing.name = item.name;
+                    updatedCount++;
+                  }
+                } else {
+                  newLines.push(item.name ? `${item.name}, ${item.phone}` : item.phone);
+                }
+              }
+            });
+
+            if (updatedCount > 0) {
+              saveContacts();
+              render();
+            }
+
+            if (newLines.length > 0) {
+              const currentText = document.getElementById('bulkPasteInput').value.trim();
+              document.getElementById('bulkPasteInput').value = currentText ? `${currentText}\n${newLines.join('\n')}` : newLines.join('\n');
+              updateBulkCountPreview();
+            }
+
+            showToast(`تمت معالجة ملف جهات الاتصال VCF: ${updatedCount > 0 ? `تحديث ${updatedCount} اسم مسجل، و` : ''}تجهيز ${newLines.length} رقم جديد.`, 'success');
+          } catch (err) {
+            console.error('VCF error:', err);
+            showToast('حدث خطأ أثناء قراءة ملف جهات الاتصال VCF!', 'error');
+          }
+        };
+        reader.readAsText(file, 'UTF-8');
+      }
+      // 3. ملفات CSV أو نصوص عادية TXT
+      else {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const content = e.target.result;
+          document.getElementById('bulkPasteInput').value = content;
+          updateBulkCountPreview();
+          showToast(`تم تحميل الملف: ${file.name}`, 'info');
+        };
+        reader.readAsText(file, 'UTF-8');
+      }
+
       event.target.value = '';
+    }
+
+    // دالة استخراج الأسماء والأرقام من ملفات جهات الاتصال VCF
+    function parseVcfToContacts(vcfText) {
+      const results = [];
+      const cards = vcfText.split(/BEGIN:VCARD/i);
+
+      cards.forEach(card => {
+        if (!card.trim()) return;
+
+        let name = '';
+        const fnMatch = card.match(/FN(?:;[^:]*)?:([^\r\n]+)/i);
+        if (fnMatch) {
+          name = fnMatch[1].trim();
+        } else {
+          const nMatch = card.match(/N(?:;[^:]*)?:([^\r\n]+)/i);
+          if (nMatch) {
+            name = nMatch[1].split(';').filter(Boolean).reverse().join(' ').trim();
+          }
+        }
+
+        const telMatches = [...card.matchAll(/TEL(?:;[^:]*)?:([^\r\n]+)/gi)];
+        telMatches.forEach(m => {
+          const rawTel = m[1].replace(/[^\d+]/g, '');
+          if (rawTel) {
+            results.push({ name: name, phone: rawTel });
+          }
+        });
+      });
+
+      return results;
     }
 
     function processSingleAdd() {
@@ -1620,6 +1835,26 @@
       } else {
         showToast(`تم تفعيل الرقم للإرسال: ${contact.name || contact.phone}`, 'success');
       }
+    }
+
+    // إلغاء تعليق جميع الأرقام في المجموعة الحالية
+    function unsuspendAllInGroup() {
+      const suspendedInGroup = contacts.filter(c => c.groupId === activeGroupId && c.suspended);
+      if (suspendedInGroup.length === 0) {
+        showToast('لا توجد أرقام معلّقة في هذه المجموعة لإلغاء تعليقها!', 'info');
+        return;
+      }
+
+      contacts = contacts.map(c => {
+        if (c.groupId === activeGroupId && c.suspended) {
+          return { ...c, suspended: false };
+        }
+        return c;
+      });
+
+      saveContacts();
+      render();
+      showToast(`تم إلغاء تعليق وتفعيل ${suspendedInGroup.length} رقم للإرسال بنجاح! 🎉`, 'success');
     }
 
     /* ==========================================================================
@@ -2106,6 +2341,313 @@
       const box = document.getElementById('confirmModalBox');
       modal.classList.add('opacity-0', 'pointer-events-none');
       box.classList.add('scale-95');
+    }
+
+    /* ==========================================================================
+       13. نظام الإرسال التلقائي الذكي بمؤقت أمان (Auto-Runner with Delay)
+       ========================================================================== */
+    let autoRunnerState = {
+      isRunning: false,
+      isPaused: false,
+      countdownId: null,
+      secondsRemaining: 0,
+      activeDelay: 5
+    };
+
+    function startAutoRunner() {
+      if (!currentMessage.trim()) {
+        showToast('يرجى كتابة وحفظ نص الرسالة أولاً قبل تشغيل الإرسال التلقائي!', 'warning');
+        if (window.innerWidth < 768) setMobileTab('message');
+        return;
+      }
+
+      const pendingContacts = contacts.filter(c => c.groupId === activeGroupId && !c.sent && !c.suspended);
+      if (pendingContacts.length === 0) {
+        showToast('لا توجد أرقام قيد الانتظار في هذه المجموعة لإرسالها!', 'info');
+        return;
+      }
+
+      const delaySelect = document.getElementById('autoDelaySelect');
+      autoRunnerState.activeDelay = parseInt(delaySelect ? delaySelect.value : '5', 10) || 5;
+      autoRunnerState.isRunning = true;
+      autoRunnerState.isPaused = false;
+
+      updateAutoRunnerUI();
+      showToast(`بدأ الإرسال التلقائي بفاصل زمني ${autoRunnerState.activeDelay} ثوانٍ.`, 'info');
+
+      // إرسال أول رقم في سياق نقرة الزر لضمان عدم حظر النوافذ المنبثقة
+      sendNextAutoContact();
+    }
+
+    function sendNextAutoContact() {
+      if (!autoRunnerState.isRunning || autoRunnerState.isPaused) return;
+
+      const nextContact = contacts.find(c => c.groupId === activeGroupId && !c.sent && !c.suspended);
+      if (!nextContact) {
+        stopAutoRunner(true);
+        showToast('اكتمل الإرسال التلقائي لجميع أرقام المجموعة بنجاح! 🎉', 'success');
+        return;
+      }
+
+      // إرسال الرقم الحالي
+      sendMessage(nextContact.id);
+
+      // بدء العد التنازلي للرقم القادم
+      startAutoCountdown(autoRunnerState.activeDelay);
+    }
+
+    function startAutoCountdown(delaySeconds) {
+      if (!autoRunnerState.isRunning || autoRunnerState.isPaused) return;
+
+      autoRunnerState.secondsRemaining = delaySeconds;
+      updateCountdownBadgeText(autoRunnerState.secondsRemaining);
+
+      clearInterval(autoRunnerState.countdownId);
+      autoRunnerState.countdownId = setInterval(() => {
+        if (!autoRunnerState.isRunning || autoRunnerState.isPaused) {
+          clearInterval(autoRunnerState.countdownId);
+          return;
+        }
+
+        autoRunnerState.secondsRemaining--;
+        if (autoRunnerState.secondsRemaining <= 0) {
+          clearInterval(autoRunnerState.countdownId);
+          sendNextAutoContact();
+        } else {
+          updateCountdownBadgeText(autoRunnerState.secondsRemaining);
+        }
+      }, 1000);
+    }
+
+    function updateCountdownBadgeText(sec) {
+      const countdownText = document.getElementById('autoRunnerCountdownText');
+      if (countdownText) {
+        countdownText.textContent = `التالي بعد ${sec} ثوانٍ...`;
+      }
+    }
+
+    function pauseAutoRunner() {
+      if (!autoRunnerState.isRunning) return;
+
+      if (!autoRunnerState.isPaused) {
+        // إيقاف مؤقت
+        autoRunnerState.isPaused = true;
+        clearInterval(autoRunnerState.countdownId);
+
+        const btnPause = document.getElementById('btnPauseAuto');
+        if (btnPause) {
+          btnPause.innerHTML = '<i class="fa-solid fa-play"></i> <span>استئناف</span>';
+          btnPause.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-amber-400 hover:bg-amber-300 text-slate-950 transition';
+        }
+        const countdownText = document.getElementById('autoRunnerCountdownText');
+        if (countdownText) countdownText.textContent = 'متوقف مؤقتاً';
+        showToast('تم الإيقاف المؤقت للإرسال التلقائي', 'info');
+      } else {
+        // استئناف
+        autoRunnerState.isPaused = false;
+        const btnPause = document.getElementById('btnPauseAuto');
+        if (btnPause) {
+          btnPause.innerHTML = '<i class="fa-solid fa-pause"></i> <span>إيقاف مؤقت</span>';
+          btnPause.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/20 hover:bg-white/30 text-white transition';
+        }
+        showToast('تم استئناف الإرسال التلقائي', 'info');
+        startAutoCountdown(autoRunnerState.secondsRemaining > 0 ? autoRunnerState.secondsRemaining : autoRunnerState.activeDelay);
+      }
+    }
+
+    function stopAutoRunner(silent = false) {
+      clearInterval(autoRunnerState.countdownId);
+      autoRunnerState.isRunning = false;
+      autoRunnerState.isPaused = false;
+      autoRunnerState.secondsRemaining = 0;
+
+      updateAutoRunnerUI();
+      if (!silent) {
+        showToast('تم إنهاء الإرسال التلقائي', 'info');
+      }
+    }
+
+    function updateAutoRunnerUI() {
+      const btnStart = document.getElementById('btnStartAuto');
+      const btnPause = document.getElementById('btnPauseAuto');
+      const btnStop = document.getElementById('btnStopAuto');
+      const statusBadge = document.getElementById('autoRunnerStatus');
+
+      if (autoRunnerState.isRunning) {
+        if (btnStart) btnStart.classList.add('hidden');
+        if (btnPause) {
+          btnPause.classList.remove('hidden');
+          btnPause.innerHTML = '<i class="fa-solid fa-pause"></i> <span>إيقاف مؤقت</span>';
+          btnPause.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/20 hover:bg-white/30 text-white transition';
+        }
+        if (btnStop) btnStop.classList.remove('hidden');
+        if (statusBadge) {
+          statusBadge.classList.remove('hidden');
+          statusBadge.classList.add('flex');
+        }
+      } else {
+        if (btnStart) btnStart.classList.remove('hidden');
+        if (btnPause) btnPause.classList.add('hidden');
+        if (btnStop) btnStop.classList.add('hidden');
+        if (statusBadge) {
+          statusBadge.classList.add('hidden');
+          statusBadge.classList.remove('flex');
+        }
+      }
+    }
+
+    /* ==========================================================================
+       14. نظام النسخ الاحتياطي والاستعادة الشامل (JSON Backup & Restore)
+       ========================================================================== */
+    function toggleBackupMenu() {
+      const menu = document.getElementById('backupDropdown');
+      if (menu) menu.classList.toggle('hidden');
+    }
+
+    // إغلاق قائمة النسخ الاحتياطي عند النقر في أي مكان خارجها
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('backupDropdown');
+      if (menu && !menu.classList.contains('hidden')) {
+        if (!e.target.closest('#backupDropdown') && !e.target.closest('button[onclick*="toggleBackupMenu"]')) {
+          menu.classList.add('hidden');
+        }
+      }
+    });
+
+    function exportFullBackupJSON() {
+      const backupData = {
+        appName: "بَلِّغْ",
+        version: "2.0",
+        exportedAt: new Date().toISOString(),
+        groups: groups,
+        activeGroupId: activeGroupId,
+        contacts: contacts,
+        message: currentMessage,
+        countryCode: localStorage.getItem('wa_pro_country_code') || '20'
+      };
+
+      const jsonStr = JSON.stringify(backupData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `balligh_backup_${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast('تم تصدير النسخة الاحتياطية بنجاح!', 'success');
+    }
+
+    function triggerRestoreJSON() {
+      let fileInput = document.getElementById('restoreFileInput');
+      if (!fileInput) {
+        fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.id = 'restoreFileInput';
+        fileInput.accept = '.json';
+        fileInput.style.display = 'none';
+        fileInput.onchange = handleRestoreJSON;
+        document.body.appendChild(fileInput);
+      }
+      fileInput.click();
+    }
+
+    function handleRestoreJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!data.groups || !Array.isArray(data.contacts)) {
+            throw new Error('Invalid JSON structure');
+          }
+
+          openModal(
+            'تأكيد استعادة النسخة الاحتياطية',
+            `تحتوي هذه النسخة على ${data.groups.length} مجموعات و ${data.contacts.length} جهة اتصال. هل أنت متأكد من استبدال البيانات الحالية بها؟`,
+            () => {
+              groups = data.groups;
+              contacts = data.contacts;
+              activeGroupId = data.activeGroupId || (groups[0] ? groups[0].id : 'grp_default');
+
+              if (data.message !== undefined) {
+                currentMessage = data.message;
+                const msgInput = document.getElementById('messageInput');
+                if (msgInput) msgInput.value = currentMessage;
+                updateMessagePreview();
+              }
+
+              if (data.countryCode) {
+                const countrySelect = document.getElementById('defaultCountryCode');
+                if (countrySelect) countrySelect.value = data.countryCode;
+                localStorage.setItem('wa_pro_country_code', data.countryCode);
+              }
+
+              saveGroups();
+              saveContacts();
+              saveMessage();
+              renderGroupSelector();
+              render();
+
+              showToast('تمت استعادة النسخة الاحتياطية بنجاح تام! 🎉', 'success');
+            }
+          );
+        } catch (err) {
+          console.error('Backup restore error:', err);
+          showToast('ملف النسخة الاحتياطية غير صالح أو تالف! يرجى اختيار ملف JSON صحيح صادم من بَلِّغْ.', 'error');
+        }
+      };
+      reader.readAsText(file, 'UTF-8');
+      event.target.value = '';
+    }
+
+    /* ==========================================================================
+       15. تسجيل الـ Service Worker وتثبيت التطبيق (PWA Installation)
+       ========================================================================== */
+    let deferredPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btnInstall = document.getElementById('btnInstallPWA');
+      if (btnInstall) btnInstall.classList.remove('hidden');
+    });
+
+    function installPWA() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            showToast('شكراً لتثبيت تطبيق بَلِّغْ على جهازك! 🎉', 'success');
+          }
+          deferredPrompt = null;
+          const btnInstall = document.getElementById('btnInstallPWA');
+          if (btnInstall) btnInstall.classList.add('hidden');
+        });
+      } else {
+        showToast('التطبيق جاهز للتثبيت أو مثبت بالفعل! يمكنك أيضاً تثبيته من خيارات المتصفح.', 'info');
+      }
+    }
+
+    window.addEventListener('appinstalled', () => {
+      const btnInstall = document.getElementById('btnInstallPWA');
+      if (btnInstall) btnInstall.classList.add('hidden');
+      showToast('تم تثبيت بَلِّغْ بنجاح!', 'success');
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(reg => {
+            console.log('Service Worker Registered successfully:', reg.scope);
+          })
+          .catch(err => {
+            console.warn('Service Worker Registration error:', err);
+          });
+      });
     }
   </script>
 </body>
