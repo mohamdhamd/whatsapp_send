@@ -61,9 +61,14 @@
   </script>
 
   <style>
-    body {
-      font-family: 'Cairo', sans-serif;
+    body, input, textarea, select, button {
+      font-family: 'Cairo', sans-serif !important;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ضمان تناسق الخطوط العربية وتوصيل الحروف بسلاسة داخل عناصر monospace */
+    .font-mono {
+      font-family: 'JetBrains Mono', 'Cairo', monospace !important;
     }
 
     /* سكرول بار عصري وأنيق */
@@ -135,7 +140,7 @@
 
   <!-- ==================== رأس الصفحة والتنقل (Header & Navigation) ==================== -->
   <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-colors">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div class="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- اللوجو والعنوان -->
       <div class="flex items-center gap-2.5">
@@ -195,11 +200,11 @@
   </header>
 
   <!-- ==================== المحتوى الرئيسي (Main Container) ==================== -->
-  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6">
+  <main class="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6">
 
     <!-- ================= شريط النفحات والآيات النبوية (Spiritual Quotes Banner) ================= -->
     <section class="flex items-center justify-center w-full">
-      <div class="w-full max-w-3xl py-2 px-3.5 sm:px-5 rounded-full bg-gradient-to-r from-amber-50 via-amber-100/50 to-amber-50 dark:from-amber-950/40 dark:via-amber-900/30 dark:to-amber-950/40 border border-amber-300 dark:border-amber-700/80 shadow-sm flex items-center justify-between gap-2.5 transition-all duration-300 hover:shadow-md">
+      <div class="w-full max-w-3xl xl:max-w-4xl py-2 px-3.5 sm:px-5 rounded-full bg-gradient-to-r from-amber-50 via-amber-100/50 to-amber-50 dark:from-amber-950/40 dark:via-amber-900/30 dark:to-amber-950/40 border border-amber-300 dark:border-amber-700/80 shadow-sm flex items-center justify-between gap-2.5 transition-all duration-300 hover:shadow-md">
         
         <!-- زر التبديل الدائري على اليسار (Refresh Quote) -->
         <button onclick="nextSpiritualQuote(true)" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-amber-200/60 dark:bg-amber-900/60 hover:bg-amber-300/80 text-amber-800 dark:text-amber-200 flex items-center justify-center transition-all duration-300 flex-shrink-0 active:scale-95 shadow-xs" title="اقتباس آخر">
@@ -332,59 +337,64 @@
 
     </section>
 
-    <!-- ================= 2. الشبكة الرئيسية (Message Composer + Bulk Importer) ================= -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
+    <!-- ================= 2. الشبكة الرئيسية المتجاوبة للشاشات الكبيرة (Workspace Grid) ================= -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
 
-      <!-- ================= محرر الرسائل والقوالب والمعاينة (Col 7) ================= -->
-      <section id="sectionMessage" class="lg:col-span-7 space-y-4">
+      <!-- ================= 1. محرر الرسائل والقوالب الموحدة (Col 5 on xl, Col 7 on lg) ================= -->
+      <section id="sectionMessage" class="lg:col-span-7 xl:col-span-5 flex flex-col">
         
-        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card p-4 sm:p-6 transition-colors">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card p-4 sm:p-6 transition-colors flex flex-col justify-between h-full">
           
-          <!-- رأس محرر الرسائل -->
-          <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
-            <div class="flex items-center gap-2">
-              <span class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-sm">
-                <i class="fa-solid fa-message"></i>
+          <div>
+            <!-- رأس محرر الرسائل -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-sm">
+                  <i class="fa-solid fa-message"></i>
+                </span>
+                <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">نص الرسالة الموحدة</h2>
+              </div>
+
+              <!-- اختيار القوالب الجاهزة -->
+              <div class="flex items-center gap-2 w-full xs:w-auto">
+                <label for="templateSelect" class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">القالب:</label>
+                <select id="templateSelect" onchange="applyTemplate()" class="flex-1 xs:flex-none text-xs bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                  <option value="">-- اختر قالباً جاهزاً --</option>
+                  <option value="welcome">رسالة ترحيبية بالعميل</option>
+                  <option value="promo">عرض ترويجي / خصم خاص</option>
+                  <option value="reminder">تذكير بموعد أو دفع</option>
+                  <option value="feedback">طلب تقييم الخدمة</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- أزرار المتغيرات الديناميكية (Dynamic Tags) -->
+            <div class="flex flex-wrap items-center gap-2 mb-2.5">
+              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">إدراج متغير:</span>
+              <button type="button" onclick="insertVariable('{الاسم}')" class="inline-flex items-center gap-1 text-xs bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800 transition font-bold">
+                <i class="fa-solid fa-plus text-[10px]"></i> {الاسم}
+              </button>
+              <button type="button" onclick="insertVariable('{رقم}')" class="inline-flex items-center gap-1 text-xs bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/60 px-2.5 py-1 rounded-lg border border-blue-200 dark:border-blue-800 transition font-bold">
+                <i class="fa-solid fa-plus text-[10px]"></i> {رقم}
+              </button>
+              <span class="text-[11px] text-slate-400 mr-auto hidden sm:inline">
+                (يتم استبدالها ببيانات العميل تلقائياً)
               </span>
-              <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">نص الرسالة الموحدة</h2>
             </div>
 
-            <!-- اختيار القوالب الجاهزة -->
-            <div class="flex items-center gap-2 w-full xs:w-auto">
-              <label for="templateSelect" class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">القالب:</label>
-              <select id="templateSelect" onchange="applyTemplate()" class="flex-1 xs:flex-none text-xs bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                <option value="">-- اختر قالباً جاهزاً --</option>
-                <option value="welcome">رسالة ترحيبية بالعميل</option>
-                <option value="promo">عرض ترويجي / خصم خاص</option>
-                <option value="reminder">تذكير بموعد أو دفع</option>
-                <option value="feedback">طلب تقييم الخدمة</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- أزرار المتغيرات الديناميكية (Dynamic Tags) -->
-          <div class="flex flex-wrap items-center gap-2 mb-2.5">
-            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">إدراج متغير:</span>
-            <button type="button" onclick="insertVariable('{الاسم}')" class="inline-flex items-center gap-1 text-xs bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800 transition font-mono">
-              <i class="fa-solid fa-plus text-[10px]"></i> {الاسم}
-            </button>
-            <span class="text-[11px] text-slate-400 mr-auto hidden sm:inline">
-              (سيتم استبدال المتغير باسم العميل تلقائياً عند الإرسال)
-            </span>
-          </div>
-
-          <!-- مربع كتابة الرسالة -->
-          <div class="relative">
-            <textarea 
-              id="messageInput" 
-              rows="4" 
-              oninput="updateMessagePreview()"
-              class="w-full p-3.5 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent focus:outline-none transition leading-relaxed resize-y" 
-              placeholder="اكتب نص الرسالة هنا... مثال: مرحباً {الاسم}، يسعدنا التواصل معك..."></textarea>
-            
-            <div class="flex items-center justify-between mt-1 text-[11px] text-slate-400 px-1">
-              <span id="charCounter">0 حرف | ~0 كلمة</span>
-              <button type="button" onclick="clearMessageText()" class="text-slate-400 hover:text-red-500 transition">مسح النص</button>
+            <!-- مربع كتابة الرسالة -->
+            <div class="relative">
+              <textarea 
+                id="messageInput" 
+                rows="5" 
+                oninput="updateMessagePreview()"
+                class="w-full p-3.5 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent focus:outline-none transition leading-relaxed resize-y" 
+                placeholder="اكتب نص الرسالة هنا... مثال: مرحباً {الاسم}، يسعدنا التواصل معك..."></textarea>
+              
+              <div class="flex items-center justify-between mt-1 text-[11px] text-slate-400 px-1">
+                <span id="charCounter">0 حرف | ~0 كلمة</span>
+                <button type="button" onclick="clearMessageText()" class="text-slate-400 hover:text-red-500 transition">مسح النص</button>
+              </div>
             </div>
           </div>
 
@@ -392,7 +402,7 @@
           <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2.5">
             <div class="text-[11px] text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
               <i class="fa-solid fa-triangle-exclamation"></i>
-              <span>تحديث الرسالة وحفظها يعيد تعيين حالة الإرسال للأرقام لتجهيز حملة جديدة.</span>
+              <span>تحديث الرسالة يعيد تعيين حالة الإرسال لتجهيز حملة جديدة.</span>
             </div>
 
             <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
@@ -403,13 +413,13 @@
             </div>
           </div>
 
-          <!-- قسم المعاينة الحية للرسالة كما ستظهر للمستلم (WhatsApp Live Preview) -->
-          <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800">
+          <!-- قسم المعاينة الحية للرسالة في الشاشات الصغيرة والمتوسطة (تختفي في الشاشات الكبيرة لوجود هاتف محاكاة مستقل) -->
+          <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 xl:hidden">
             <div class="flex items-center justify-between mb-2">
               <span class="text-xs font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
                 <i class="fa-solid fa-eye text-emerald-500"></i> معاينة مظهر الرسالة في واتساب:
               </span>
-              <span class="text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-md font-mono">
+              <span class="text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-md">
                 محاكاة اسم: "أحمد علي"
               </span>
             </div>
@@ -431,119 +441,206 @@
 
       </section>
 
-      <!-- ================= نظام الإضافة والاستيراد المجمّع للأرقام (Col 5) ================= -->
-      <section id="sectionImport" class="lg:col-span-5 space-y-4">
+      <!-- ================= 2. نظام الإضافة والاستيراد المجمّع للأرقام (Col 4 on xl, Col 5 on lg) ================= -->
+      <section id="sectionImport" class="lg:col-span-5 xl:col-span-4 flex flex-col">
         
-        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card p-4 sm:p-6 transition-colors">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card p-4 sm:p-6 transition-colors flex flex-col justify-between h-full">
           
-          <!-- ترويسة التبويبات -->
-          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
-            <div class="flex items-center gap-2">
-              <span class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 flex items-center justify-center text-sm">
-                <i class="fa-solid fa-address-book"></i>
-              </span>
-              <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">إضافة للمجموعة الحالية</h2>
+          <div>
+            <!-- ترويسة التبويبات -->
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 flex items-center justify-center text-sm">
+                  <i class="fa-solid fa-address-book"></i>
+                </span>
+                <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">إضافة للمجموعة الحالية</h2>
+              </div>
+
+              <div class="flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200/80 dark:border-slate-700/80">
+                <button id="tabBulkBtn" onclick="switchAddTab('bulk')" class="text-xs px-3 py-1 font-bold rounded-lg transition bg-white dark:bg-slate-900 text-emerald-600 shadow-sm">
+                  <i class="fa-solid fa-layer-group ml-1"></i> لصق مجمّع
+                </button>
+                <button id="tabSingleBtn" onclick="switchAddTab('single')" class="text-xs px-3 py-1 font-semibold rounded-lg transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                  <i class="fa-solid fa-user-plus ml-1"></i> إدخال فردي
+                </button>
+              </div>
             </div>
 
-            <div class="flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200/80 dark:border-slate-700/80">
-              <button id="tabBulkBtn" onclick="switchAddTab('bulk')" class="text-xs px-3 py-1 font-bold rounded-lg transition bg-white dark:bg-slate-900 text-emerald-600 shadow-sm">
-                <i class="fa-solid fa-layer-group ml-1"></i> لصق مجمّع
-              </button>
-              <button id="tabSingleBtn" onclick="switchAddTab('single')" class="text-xs px-3 py-1 font-semibold rounded-lg transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                <i class="fa-solid fa-user-plus ml-1"></i> إدخال فردي
-              </button>
-            </div>
-          </div>
-
-          <!-- اختيار كود الدولة الافتراضي الذكي -->
-          <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200/70 dark:border-slate-700/60 mb-3 space-y-1.5">
-            <div class="flex items-center justify-between">
-              <label for="defaultCountryCode" class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                <i class="fa-solid fa-globe text-emerald-500"></i>
-                كود الدولة التلقائي للأرقام المحلية:
-              </label>
-            </div>
-            <select id="defaultCountryCode" class="w-full text-xs font-mono bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 p-2 rounded-lg border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-              <option value="20" selected>🇪🇬 مصر (+20) - سيحول 010.. تلقائياً إلى 2010..</option>
-              <option value="966">🇸🇦 السعودية (+966) - سيحول 05.. تلقائياً إلى 9665..</option>
-              <option value="971">🇦🇪 الإمارات (+971) - سيحول 05.. تلقائياً إلى 9715..</option>
-              <option value="965">🇰🇼 الكويت (+965)</option>
-              <option value="962">🇯🇴 الأردن (+962)</option>
-              <option value="968">🇴🇲 عُمان (+968)</option>
-              <option value="974">🇶🇦 قطر (+974)</option>
-              <option value="964">🇮🇶 العراق (+964)</option>
-              <option value="212">🇲🇦 المغرب (+212)</option>
-              <option value="216">🇹🇳 تونس (+216)</option>
-              <option value="213">🇩🇿 الجزائر (+213)</option>
-              <option value="none">🌐 الأرقام تحتوي بالفعل على كود الدولة الدولي</option>
-            </select>
-          </div>
-
-          <!-- 1. نموذج الإدخال المجمّع (Bulk Form) -->
-          <div id="bulkFormContainer" class="space-y-3">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-slate-700 dark:text-slate-300">
-                الصق قائمة الأرقام والأسماء والملاحظات:
-              </label>
-              <label for="fileUploadInput" class="cursor-pointer text-[11px] font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
-                <i class="fa-solid fa-file-excel text-emerald-500"></i> استيراد ملف (Excel / VCF / CSV)
-              </label>
-              <input type="file" id="fileUploadInput" accept=".xlsx,.xls,.csv,.txt,.vcf" onchange="handleFileUpload(event)">
+            <!-- اختيار كود الدولة الافتراضي الذكي (بدون تشويه الخط العربي) -->
+            <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200/70 dark:border-slate-700/60 mb-3 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label for="defaultCountryCode" class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                  <i class="fa-solid fa-globe text-emerald-500"></i>
+                  كود الدولة التلقائي للأرقام المحلية:
+                </label>
+              </div>
+              <select id="defaultCountryCode" class="w-full text-xs bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <option value="20" selected>🇪🇬 مصر (+20) - سيحول 010.. تلقائياً إلى 2010..</option>
+                <option value="966">🇸🇦 السعودية (+966) - سيحول 05.. تلقائياً إلى 9665..</option>
+                <option value="971">🇦🇪 الإمارات (+971) - سيحول 05.. تلقائياً إلى 9715..</option>
+                <option value="965">🇰🇼 الكويت (+965)</option>
+                <option value="962">🇯🇴 الأردن (+962)</option>
+                <option value="968">🇴🇲 عُمان (+968)</option>
+                <option value="974">🇶🇦 قطر (+974)</option>
+                <option value="964">🇮🇶 العراق (+964)</option>
+                <option value="212">🇲🇦 المغرب (+212)</option>
+                <option value="216">🇹🇳 تونس (+216)</option>
+                <option value="213">🇩🇿 الجزائر (+213)</option>
+                <option value="none">🌐 الأرقام تحتوي بالفعل على كود الدولة الدولي</option>
+              </select>
             </div>
 
-            <textarea 
-              id="bulkPasteInput" 
-              rows="6" 
-              class="w-full p-3 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-800 dark:text-slate-200 font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none transition leading-relaxed resize-y" 
-              placeholder="يدعم مختلف الصيغ:
+            <!-- 1. نموذج الإدخال المجمّع (Bulk Form) -->
+            <div id="bulkFormContainer" class="space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  الصق قائمة الأرقام والأسماء والملاحظات:
+                </label>
+                <label for="fileUploadInput" class="cursor-pointer text-[11px] font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-lg">
+                  <i class="fa-solid fa-file-excel text-emerald-500"></i> استيراد ملف (Excel / VCF / CSV)
+                </label>
+                <input type="file" id="fileUploadInput" accept=".xlsx,.xls,.csv,.txt,.vcf" onchange="handleFileUpload(event)" class="hidden">
+              </div>
+
+              <textarea 
+                id="bulkPasteInput" 
+                rows="5" 
+                class="w-full p-3 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-800 dark:text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none transition leading-relaxed resize-y" 
+                placeholder="يدعم مختلف الصيغ:
 01012345678
 01198765432 - محمد أحمد
 أحمد محمود , 01234567890 , ملاحظة: طلب اتصال
 مباشرة من عمود الإكسيل!"></textarea>
 
-            <div class="flex items-center justify-between text-[11px] text-slate-400">
-              <span id="bulkCountPreview">0 أرقام محتملة تم اكتشافها</span>
-              <button type="button" onclick="document.getElementById('bulkPasteInput').value = ''; updateBulkCountPreview();" class="text-slate-400 hover:text-red-500">مسح الصندوق</button>
+              <div class="flex items-center justify-between text-[11px] text-slate-400">
+                <span id="bulkCountPreview">0 أرقام محتملة تم اكتشافها</span>
+                <button type="button" onclick="document.getElementById('bulkPasteInput').value = ''; updateBulkCountPreview();" class="text-slate-400 hover:text-red-500">مسح الصندوق</button>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <label class="inline-flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 cursor-pointer select-none">
+                  <input type="checkbox" id="skipDuplicatesCheck" checked class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300">
+                  <span>استبعاد الأرقام المكررة في نفس المجموعة</span>
+                </label>
+              </div>
             </div>
 
-            <div class="flex items-center gap-2">
-              <label class="inline-flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 cursor-pointer select-none">
-                <input type="checkbox" id="skipDuplicatesCheck" checked class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300">
-                <span>استبعاد الأرقام المكررة في نفس المجموعة</span>
-              </label>
-            </div>
+            <!-- 2. نموذج الإدخال الفردي (Single Form) -->
+            <div id="singleFormContainer" class="space-y-3 hidden">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">اسم العميل (اختياري):</label>
+                <input type="text" id="singleName" placeholder="مثال: المهندس أحمد" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+              </div>
 
-            <button onclick="processBulkAdd()" class="w-full inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white py-3 rounded-xl text-xs sm:text-sm font-bold shadow-md transition">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">رقم الهاتف:</label>
+                <input type="text" id="singlePhone" placeholder="مثال: 01012345678 أو 201012345678" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-100 font-mono text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ملاحظة خاصة بالعميل (اختياري):</label>
+                <input type="text" id="singleNotes" placeholder="مثال: مهتم بالعرض - اتصل بعد الظهر" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+              </div>
+            </div>
+          </div>
+
+          <!-- زر الاعتماد في نهاية البطاقة -->
+          <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button id="btnProcessAddAction" onclick="processBulkAdd()" class="w-full inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white py-3 rounded-xl text-xs sm:text-sm font-bold shadow-md transition">
               <i class="fa-solid fa-bolt-lightning text-amber-400"></i>
               <span>استيراد ومعالجة القائمة دفعة واحدة</span>
             </button>
           </div>
 
-          <!-- 2. نموذج الإدخال الفردي (Single Form) -->
-          <div id="singleFormContainer" class="space-y-3 hidden">
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">اسم العميل (اختياري):</label>
-              <input type="text" id="singleName" placeholder="مثال: المهندس أحمد" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        </div>
+
+      </section>
+
+      <!-- ================= 3. محاكي واتساب التفاعلي المستقل في الشاشات الكبيرة (Col 3 on xl) ================= -->
+      <section id="sectionPreview" class="hidden xl:flex xl:col-span-3 flex-col">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card p-4 transition-colors flex flex-col justify-between h-full">
+          
+          <div>
+            <!-- رأس شاشة المحاكي -->
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-sm">
+                  <i class="fa-brands fa-whatsapp text-lg"></i>
+                </span>
+                <div>
+                  <h3 class="text-xs font-bold text-slate-900 dark:text-white">معاينة واتساب الحية</h3>
+                  <span class="text-[10px] text-slate-400">تحديث فوري أثناء الكتابة</span>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-emerald-200/60 dark:border-emerald-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> مباشر
+              </span>
             </div>
 
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">رقم الهاتف:</label>
-              <input type="text" id="singlePhone" placeholder="مثال: 01012345678 أو 201012345678" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-100 font-mono text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-            </div>
+            <!-- إطار هاتف واتساب الأنيق (WhatsApp Mockup Screen) -->
+            <div class="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700/80 shadow-md flex flex-col bg-[#efeae2] dark:bg-[#0b141a]">
+              
+              <!-- شريط رأس محادثة واتساب الأخضر -->
+              <div class="bg-[#075e54] dark:bg-[#1f2c34] text-white px-3 py-2.5 flex items-center justify-between text-xs flex-shrink-0 shadow-sm">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold text-white shadow-inner">
+                    <i class="fa-solid fa-user"></i>
+                  </div>
+                  <div>
+                    <span class="font-bold block leading-tight text-[11px] text-white">أحمد علي (محاكاة)</span>
+                    <span class="text-[9px] text-emerald-200 block leading-tight flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span> متصل الآن
+                    </span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 text-white/90 text-xs">
+                  <i class="fa-solid fa-video cursor-pointer hover:text-white transition"></i>
+                  <i class="fa-solid fa-phone cursor-pointer hover:text-white transition"></i>
+                </div>
+              </div>
 
-            <div>
-              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ملاحظة خاصة بالعميل (اختياري):</label>
-              <input type="text" id="singleNotes" placeholder="مثال: مهتم بالعرض - اتصل بعد الظهر" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-            </div>
+              <!-- مساحة المحادثة ونمط الخلفية التفاعلي -->
+              <div class="wa-chat-pattern p-3 flex-1 overflow-y-auto flex flex-col justify-start min-h-[220px]">
+                
+                <!-- شارة تاريخ المحادثة بالمنتصف -->
+                <div class="text-center my-1.5">
+                  <span class="bg-white/80 dark:bg-slate-800/90 text-slate-600 dark:text-slate-300 text-[10px] px-2.5 py-0.5 rounded-md shadow-xs font-semibold">
+                    اليوم
+                  </span>
+                </div>
 
-            <button onclick="processSingleAdd()" class="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-emerald-600/20 transition">
-              <i class="fa-solid fa-user-plus"></i>
-              <span>إضافة للقائمة</span>
-            </button>
+                <!-- فقاعة رسالة واتساب الخضراء -->
+                <div class="whatsapp-bubble max-w-[92%] mr-auto p-3 text-xs text-slate-800 dark:text-slate-100 whitespace-pre-wrap leading-relaxed shadow-sm">
+                  <div id="livePreviewTextDesktop" class="break-words">
+                    اكتب نص رسالتك بالأعلى لرؤية المعاينة الحية فوراً هنا...
+                  </div>
+                  <div class="text-left mt-1.5 text-[9px] text-slate-400 dark:text-emerald-200/70 flex items-center justify-end gap-1 font-mono">
+                    <span id="previewTimeDesktop">10:00 م</span>
+                    <i class="fa-solid fa-check-double text-blue-400"></i>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- شريط إدخال الرسالة الوهمي لمحاكاة واقعية 100% -->
+              <div class="p-2 bg-[#f0f2f5] dark:bg-[#1f2c34] border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 flex-shrink-0">
+                <div class="flex-1 bg-white dark:bg-[#2a3942] rounded-full px-3 py-1.5 text-[10px] text-slate-400 truncate flex items-center justify-between">
+                  <span>اكتب رسالة...</span>
+                  <i class="fa-regular fa-face-smile text-slate-400 text-xs"></i>
+                </div>
+                <div class="w-7 h-7 rounded-full bg-wa text-white flex items-center justify-center text-xs flex-shrink-0 shadow-sm">
+                  <i class="fa-solid fa-microphone"></i>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="mt-3 text-[11px] text-slate-400 text-center">
+            تنسيقات واتساب مدعومة: <b class="text-slate-600 dark:text-slate-300">*عريض*</b> و <i class="text-slate-600 dark:text-slate-300">_مائل_</i>
           </div>
 
         </div>
-
       </section>
 
     </div>
@@ -737,7 +834,7 @@
 
   <!-- ==================== تذييل الصفحة الراقي (Modern Islamic-Inspired Footer) ==================== -->
   <footer class="mt-8 pt-8 pb-12 border-t border-slate-200/80 dark:border-slate-800/80 bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm transition-colors">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center space-y-4">
+    <div class="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center space-y-4">
       
       <!-- شارة الصلاة على النبي ﷺ بتصميم مبارك ومضيء -->
       <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-bold shadow-sm transition hover:scale-105 duration-200">
@@ -1292,28 +1389,58 @@
       }
     }
 
+    function formatWhatsAppPreviewText(raw) {
+      if (!raw) return '';
+      let text = raw
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\{الاسم\}|\{name\}/gi, '<span class="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1 py-0.5 rounded">أحمد علي</span>')
+        .replace(/\{رقم\}|\{phone\}/gi, '<span class="font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1 py-0.5 rounded" dir="ltr">01012345678</span>')
+        .replace(/\*([^\*\n]+)\*/g, '<b>$1</b>')
+        .replace(/_([^_\n]+)_/g, '<i>$1</i>')
+        .replace(/~([^~\n]+)~/g, '<del>$1</del>')
+        .replace(/\n/g, '<br>');
+      return text;
+    }
+
     function updateMessagePreview() {
       const text = document.getElementById('messageInput').value;
       const previewEl = document.getElementById('livePreviewText');
+      const previewElDesktop = document.getElementById('livePreviewTextDesktop');
       const charCounter = document.getElementById('charCounter');
       const previewTime = document.getElementById('previewTime');
+      const previewTimeDesktop = document.getElementById('previewTimeDesktop');
 
       const chars = text.length;
       const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-      charCounter.textContent = `${chars} حرف | ~${words} كلمة`;
+      if (charCounter) charCounter.textContent = `${chars} حرف | ~${words} كلمة`;
 
       const now = new Date();
-      previewTime.textContent = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+      const timeStr = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+      if (previewTime) previewTime.textContent = timeStr;
+      if (previewTimeDesktop) previewTimeDesktop.textContent = timeStr;
 
+      const placeholderMsg = 'اكتب نص رسالتك بالأعلى لرؤية المعاينة هنا فوراً...';
       if (!text.trim()) {
-        previewEl.textContent = 'اكتب رسالتك بالأعلى لرؤية المعاينة هنا فوراً...';
-        previewEl.className = 'break-words text-slate-400 italic';
+        if (previewEl) {
+          previewEl.innerHTML = placeholderMsg;
+          previewEl.className = 'break-words text-slate-400 italic';
+        }
+        if (previewElDesktop) {
+          previewElDesktop.innerHTML = placeholderMsg;
+          previewElDesktop.className = 'break-words text-slate-400 italic';
+        }
       } else {
-        previewEl.className = 'break-words';
-        const formatted = text
-          .replace(/\{الاسم\}|\{name\}/gi, 'أحمد علي')
-          .replace(/\{رقم\}|\{phone\}/gi, '01012345678');
-        previewEl.textContent = formatted;
+        const formattedHTML = formatWhatsAppPreviewText(text);
+        if (previewEl) {
+          previewEl.className = 'break-words';
+          previewEl.innerHTML = formattedHTML;
+        }
+        if (previewElDesktop) {
+          previewElDesktop.className = 'break-words';
+          previewElDesktop.innerHTML = formattedHTML;
+        }
       }
     }
 
