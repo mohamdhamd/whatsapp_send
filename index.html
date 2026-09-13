@@ -112,39 +112,30 @@
       border-left-color: #005c4b;
     }
 
-    /* انيميشن النبض للتحميل والمؤشرات */
-    @keyframes subtle-pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.85; transform: scale(0.98); }
-    }
-    .animate-subtle {
-      animation: subtle-pulse 3s infinite ease-in-out;
-    }
-
     /* إخفاء إدخال الملف الافتراضي */
     input[type="file"] {
       display: none;
     }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200 pb-20 md:pb-8">
 
   <!-- ==================== رأس الصفحة والتنقل (Header & Navigation) ==================== -->
   <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-colors">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- اللوجو والعنوان -->
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2.5">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white flex items-center justify-center text-xl shadow-glow">
           <i class="fa-brands fa-whatsapp"></i>
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white">
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-sm sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white">
               WhatsApp Sender <span class="text-emerald-500 font-extrabold">PRO</span>
             </h1>
-            <span class="hidden xs:inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-              v2.5
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+              v2.6
             </span>
           </div>
           <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">
@@ -154,7 +145,7 @@
       </div>
 
       <!-- أدوات الرأس السريعة -->
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1.5 sm:gap-2">
         <!-- زر التبديل بين الوضع الليلي والنهاري -->
         <button onclick="toggleDarkMode()" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="تبديل الوضع">
           <i id="themeIcon" class="fa-solid fa-moon text-base"></i>
@@ -167,8 +158,8 @@
         </button>
 
         <!-- زر عينة تجريبية سريعة -->
-        <button onclick="loadSampleData()" class="text-xs font-semibold px-3 py-2 rounded-xl text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition" title="شحن بيانات تجريبية لاختبار المنظومة">
-          <i class="fa-solid fa-wand-magic-sparkles ml-1"></i> عينة تجريبية
+        <button onclick="loadSampleData()" class="text-xs font-bold px-2.5 sm:px-3 py-2 rounded-xl text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition" title="شحن بيانات تجريبية لاختبار المنظومة">
+          <i class="fa-solid fa-wand-magic-sparkles ml-1"></i> <span class="hidden xs:inline">عينة تجريبية</span><span class="xs:hidden">عينة</span>
         </button>
       </div>
 
@@ -176,52 +167,70 @@
   </header>
 
   <!-- ==================== المحتوى الرئيسي (Main Container) ==================== -->
-  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-5 sm:space-y-6">
+
+    <!-- ================= تبويبات التنقل الخاصة بشاشات الموبايل (Mobile View Switcher) ================= -->
+    <div class="block md:hidden">
+      <div class="grid grid-cols-3 gap-1 bg-slate-200/80 dark:bg-slate-900 p-1 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <button id="mTabContacts" onclick="setMobileTab('contacts')" class="py-2.5 px-2 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm">
+          <i class="fa-solid fa-users text-xs"></i>
+          <span>الأرقام (<span id="mTabCount">0</span>)</span>
+        </button>
+        <button id="mTabMessage" onclick="setMobileTab('message')" class="py-2.5 px-2 text-xs font-semibold rounded-xl transition flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+          <i class="fa-solid fa-message text-xs"></i>
+          <span>نص الرسالة</span>
+        </button>
+        <button id="mTabImport" onclick="setMobileTab('import')" class="py-2.5 px-2 text-xs font-semibold rounded-xl transition flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+          <i class="fa-solid fa-user-plus text-xs"></i>
+          <span>إضافة أرقام</span>
+        </button>
+      </div>
+    </div>
 
     <!-- ================= 1. لوحة الإحصائيات الحية وشريط التقدم (Live Metrics) ================= -->
-    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+    <section id="sectionStats" class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
       
       <!-- إجمالي الأرقام -->
-      <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card flex items-center gap-3">
-        <div class="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-lg flex-shrink-0">
+      <div class="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card flex items-center gap-2.5 sm:gap-3">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-base sm:text-lg flex-shrink-0">
           <i class="fa-solid fa-users"></i>
         </div>
         <div>
-          <span class="text-xs font-medium text-slate-500 dark:text-slate-400 block">إجمالي المستلمين</span>
-          <span id="statTotal" class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white font-mono">0</span>
+          <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 block">إجمالي المستلمين</span>
+          <span id="statTotal" class="text-lg sm:text-2xl font-black text-slate-800 dark:text-white font-mono">0</span>
         </div>
       </div>
 
       <!-- قيد الانتظار -->
-      <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card flex items-center gap-3">
-        <div class="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg flex-shrink-0">
+      <div class="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card flex items-center gap-2.5 sm:gap-3">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-base sm:text-lg flex-shrink-0">
           <i class="fa-solid fa-clock-rotate-left"></i>
         </div>
         <div>
-          <span class="text-xs font-medium text-slate-500 dark:text-slate-400 block">قيد الانتظار</span>
-          <span id="statPending" class="text-xl sm:text-2xl font-black text-amber-600 dark:text-amber-400 font-mono">0</span>
+          <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 block">قيد الانتظار</span>
+          <span id="statPending" class="text-lg sm:text-2xl font-black text-amber-600 dark:text-amber-400 font-mono">0</span>
         </div>
       </div>
 
       <!-- تم الإرسال -->
-      <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card flex items-center gap-3">
-        <div class="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg flex-shrink-0">
+      <div class="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card flex items-center gap-2.5 sm:gap-3">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-base sm:text-lg flex-shrink-0">
           <i class="fa-solid fa-circle-check"></i>
         </div>
         <div>
-          <span class="text-xs font-medium text-slate-500 dark:text-slate-400 block">تم الإرسال</span>
-          <span id="statSent" class="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono">0</span>
+          <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 block">تم الإرسال</span>
+          <span id="statSent" class="text-lg sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono">0</span>
         </div>
       </div>
 
       <!-- نسبة الإنجاز -->
-      <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card flex items-center gap-3">
-        <div class="w-11 h-11 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center text-lg flex-shrink-0">
+      <div class="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card flex items-center gap-2.5 sm:gap-3 col-span-2 lg:col-span-1">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center text-base sm:text-lg flex-shrink-0">
           <i class="fa-solid fa-chart-pie"></i>
         </div>
         <div class="flex-1">
           <div class="flex justify-between items-center mb-1">
-            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">نسبة الإنجاز</span>
+            <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400">نسبة الإنجاز</span>
             <span id="statPercentText" class="text-xs font-bold text-purple-600 dark:text-purple-400 font-mono">0%</span>
           </div>
           <!-- شريط تقدم تفاعلي -->
@@ -234,10 +243,10 @@
     </section>
 
     <!-- ================= 2. الشبكة الرئيسية (Message Composer + Bulk Importer) ================= -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
 
-      <!-- ================= محرر الرسائل والقوالب والمعاينة (Left / Top on Mobile - Col 7) ================= -->
-      <section class="lg:col-span-7 space-y-4">
+      <!-- ================= محرر الرسائل والقوالب والمعاينة (Col 7) ================= -->
+      <section id="sectionMessage" class="lg:col-span-7 space-y-4">
         
         <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card p-4 sm:p-6 transition-colors">
           
@@ -247,13 +256,13 @@
               <span class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-sm">
                 <i class="fa-solid fa-message"></i>
               </span>
-              <h2 class="text-base font-bold text-slate-900 dark:text-white">نص الرسالة الموحدة</h2>
+              <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">نص الرسالة الموحدة</h2>
             </div>
 
             <!-- اختيار القوالب الجاهزة -->
-            <div class="flex items-center gap-2">
-              <label for="templateSelect" class="text-xs text-slate-500 dark:text-slate-400">القالب:</label>
-              <select id="templateSelect" onchange="applyTemplate()" class="text-xs bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <div class="flex items-center gap-2 w-full xs:w-auto">
+              <label for="templateSelect" class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">القالب:</label>
+              <select id="templateSelect" onchange="applyTemplate()" class="flex-1 xs:flex-none text-xs bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                 <option value="">-- اختر قالباً جاهزاً --</option>
                 <option value="welcome">رسالة ترحيبية بالعميل</option>
                 <option value="promo">عرض ترويجي / خصم خاص</option>
@@ -316,7 +325,7 @@
             </div>
 
             <div class="wa-chat-pattern p-4 rounded-xl border border-slate-200 dark:border-slate-800">
-              <div class="whatsapp-bubble max-w-[90%] sm:max-w-[80%] mr-auto p-3 text-sm text-slate-800 dark:text-slate-100 whitespace-pre-wrap leading-relaxed">
+              <div class="whatsapp-bubble max-w-[95%] sm:max-w-[80%] mr-auto p-3 text-sm text-slate-800 dark:text-slate-100 whitespace-pre-wrap leading-relaxed">
                 <div id="livePreviewText" class="break-words">
                   اكتب رسالتك بالأعلى لرؤية المعاينة هنا فوراً...
                 </div>
@@ -332,8 +341,8 @@
 
       </section>
 
-      <!-- ================= نظام الإضافة والاستيراد المجمّع للأرقام (Right / Bottom on Mobile - Col 5) ================= -->
-      <section class="lg:col-span-5 space-y-4">
+      <!-- ================= نظام الإضافة والاستيراد المجمّع للأرقام (Col 5) ================= -->
+      <section id="sectionImport" class="lg:col-span-5 space-y-4">
         
         <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card p-4 sm:p-6 transition-colors">
           
@@ -343,7 +352,7 @@
               <span class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 flex items-center justify-center text-sm">
                 <i class="fa-solid fa-address-book"></i>
               </span>
-              <h2 class="text-base font-bold text-slate-900 dark:text-white">إضافة المستلمين</h2>
+              <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">إضافة المستلمين</h2>
             </div>
 
             <!-- أزرار التبديل بين اللصق المجمّع والإضافة الفردية -->
@@ -449,11 +458,11 @@
     </div>
 
     <!-- ================= 3. شريط التحكم بالحملة والإرسال التلقائي الذكي (Smart Auto Queue) ================= -->
-    <section class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-4 sm:p-5 rounded-2xl shadow-glow">
+    <section id="sectionQueue" class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-4 sm:p-5 rounded-2xl shadow-glow">
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         
         <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center text-xl flex-shrink-0">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/10 flex items-center justify-center text-lg sm:text-xl flex-shrink-0">
             <i class="fa-solid fa-rocket"></i>
           </div>
           <div>
@@ -488,43 +497,50 @@
     </section>
 
     <!-- ================= 4. جدول وبطاقات قائمة المستلمين (Responsive Contacts List) ================= -->
-    <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card overflow-hidden transition-colors">
+    <section id="sectionContacts" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card overflow-hidden transition-colors">
       
       <!-- شريط أدوات الفلترة والبحث السريع -->
-      <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div class="p-3.5 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col gap-3">
         
-        <!-- العنوان والعدد -->
-        <div class="flex items-center gap-2">
-          <h3 class="text-base font-bold text-slate-900 dark:text-white">قائمة المستلمين</h3>
-          <span id="listBadgeCount" class="text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
-            0
-          </span>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">قائمة المستلمين</h3>
+            <span id="listBadgeCount" class="text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
+              0
+            </span>
+          </div>
+
+          <!-- زر تصدير سريع يظهر في الموبايل -->
+          <button onclick="exportToCSV()" class="sm:hidden inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800">
+            <i class="fa-solid fa-file-arrow-down text-emerald-600 text-xs"></i>
+            <span>تصدير CSV</span>
+          </button>
         </div>
 
-        <!-- البحث وفلتر الحالة -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+        <!-- البحث وفلتر الحالة في شريط متجاوب بالكامل -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
           
           <!-- حقل البحث الفوري -->
-          <div class="relative">
+          <div class="relative flex-1">
             <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
             <input 
               type="text" 
               id="searchInput" 
               oninput="filterContacts()" 
               placeholder="بحث بالاسم أو الرقم..." 
-              class="w-full sm:w-56 pr-8 pl-3 py-1.5 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+              class="w-full pr-8 pl-3 py-2 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
           </div>
 
-          <!-- فلاتر الحالة (Chips) -->
-          <div class="flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200/80 dark:border-slate-700/80">
-            <button onclick="setStatusFilter('all')" id="filterAllBtn" class="text-xs px-2.5 py-1 rounded-lg font-bold bg-white dark:bg-slate-900 text-emerald-600 shadow-sm transition">
-              الكل
+          <!-- فلاتر الحالة (3 أزرار متساوية أنيقة تدعم الموبايل) -->
+          <div class="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/80 text-center">
+            <button onclick="setStatusFilter('all')" id="filterAllBtn" class="text-xs py-1.5 px-2 rounded-lg font-bold bg-white dark:bg-slate-900 text-emerald-600 shadow-sm transition">
+              الكل (<span id="filterCountAll">0</span>)
             </button>
-            <button onclick="setStatusFilter('pending')" id="filterPendingBtn" class="text-xs px-2.5 py-1 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
-              قيد الانتظار
+            <button onclick="setStatusFilter('pending')" id="filterPendingBtn" class="text-xs py-1.5 px-2 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+              بالانتظار (<span id="filterCountPending">0</span>)
             </button>
-            <button onclick="setStatusFilter('sent')" id="filterSentBtn" class="text-xs px-2.5 py-1 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
-              تم الإرسال
+            <button onclick="setStatusFilter('sent')" id="filterSentBtn" class="text-xs py-1.5 px-2 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+              أُرسل (<span id="filterCountSent">0</span>)
             </button>
           </div>
 
@@ -551,9 +567,9 @@
         </table>
       </div>
 
-      <!-- عرض البطاقات الذكية في شاشات الجوال (Mobile Card View) -->
-      <div id="contactsMobileCards" class="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
-        <!-- يتم التوليد ديناميكياً هنا للهواتف -->
+      <!-- عرض البطاقات الذكية العصرية في شاشات الجوال (Modern Mobile Card View) -->
+      <div id="contactsMobileCards" class="md:hidden p-3 space-y-2.5">
+        <!-- يتم التوليد ديناميكياً بتصميم مدمج وغاية في الأناقة -->
       </div>
 
       <!-- شاشة الحالة الفارغة عندما لا توجد جهات اتصال -->
@@ -574,6 +590,18 @@
     </section>
 
   </main>
+
+  <!-- ==================== شريط الإرسال العائم السفلي للموبايل (Mobile Sticky Bottom Bar) ==================== -->
+  <div id="mobileStickyBar" class="fixed bottom-0 inset-x-0 z-30 p-2.5 sm:p-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/90 dark:border-slate-800 flex items-center justify-between gap-3 md:hidden shadow-lg">
+    <div class="min-w-0 pr-1">
+      <span class="text-[10px] text-slate-400 block font-medium">المتبقي للإرسال</span>
+      <span class="text-xs font-black text-amber-600 dark:text-amber-400 font-mono"><span id="stickyPendingCount">0</span> رقم</span>
+    </div>
+    <button onclick="sendNextPending()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-600/30 active:scale-95 transition truncate">
+      <i class="fa-solid fa-forward-step text-xs"></i>
+      <span id="stickyButtonText">إرسال الرقم التالي فوراً</span>
+    </button>
+  </div>
 
   <!-- ==================== النافذة المنبثقة للتأكيد (Confirm Modal) ==================== -->
   <div id="confirmModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200 p-4">
@@ -597,7 +625,7 @@
   </div>
 
   <!-- ==================== نظام الإشعارات المنبثقة (Toast Container) ==================== -->
-  <div id="toastContainer" class="fixed bottom-4 left-4 z-50 space-y-2 max-w-xs w-full pointer-events-none"></div>
+  <div id="toastContainer" class="fixed bottom-16 sm:bottom-4 left-4 z-50 space-y-2 max-w-xs w-full pointer-events-none"></div>
 
   <!-- ==================== المحرك البرمجي الرئيسي (JavaScript Engine) ==================== -->
   <script>
@@ -609,6 +637,7 @@
     let activeFilter = 'all';
     let searchQuery = '';
     let isDarkMode = false;
+    let activeMobileTab = 'contacts'; // 'contacts', 'message', 'import'
 
     // قوالب الرسائل الافتراضية
     const messageTemplates = {
@@ -623,6 +652,7 @@
       loadSettings();
       loadState();
       setupEventListeners();
+      initMobileView();
       render();
       updateMessagePreview();
     });
@@ -701,7 +731,76 @@
     }
 
     /* ==========================================================================
-       3. محرر الرسائل والقوالب والمتغيرات (Message Composer)
+       3. تبويبات الموبايل والتحكم بالشاشات الصغيرة (Mobile View Engine)
+       ========================================================================== */
+    function setMobileTab(tab) {
+      activeMobileTab = tab;
+      initMobileView();
+    }
+
+    function initMobileView() {
+      const isMobile = window.innerWidth < 768; // md breakpoint
+
+      const secContacts = document.getElementById('sectionContacts');
+      const secMessage = document.getElementById('sectionMessage');
+      const secImport = document.getElementById('sectionImport');
+      const secStats = document.getElementById('sectionStats');
+      const secQueue = document.getElementById('sectionQueue');
+      const mobileSticky = document.getElementById('mobileStickyBar');
+
+      const btnContacts = document.getElementById('mTabContacts');
+      const btnMessage = document.getElementById('mTabMessage');
+      const btnImport = document.getElementById('mTabImport');
+
+      if (!isMobile) {
+        // في الديسكتوب والتابلت تظهر كل الأقسام كاملة
+        secContacts.classList.remove('hidden');
+        secMessage.classList.remove('hidden');
+        secImport.classList.remove('hidden');
+        secStats.classList.remove('hidden');
+        secQueue.classList.remove('hidden');
+        if (mobileSticky) mobileSticky.classList.add('hidden');
+        return;
+      }
+
+      // تنسيقات أزرار التبويبات بالموبايل
+      const activeClass = 'py-2.5 px-2 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm';
+      const inactiveClass = 'py-2.5 px-2 text-xs font-semibold rounded-xl transition flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+
+      btnContacts.className = activeMobileTab === 'contacts' ? activeClass : inactiveClass;
+      btnMessage.className = activeMobileTab === 'message' ? activeClass : inactiveClass;
+      btnImport.className = activeMobileTab === 'import' ? activeClass : inactiveClass;
+
+      if (activeMobileTab === 'contacts') {
+        secContacts.classList.remove('hidden');
+        secStats.classList.remove('hidden');
+        secQueue.classList.remove('hidden');
+        secMessage.classList.add('hidden');
+        secImport.classList.add('hidden');
+        if (mobileSticky) mobileSticky.classList.remove('hidden');
+      } else if (activeMobileTab === 'message') {
+        secContacts.classList.add('hidden');
+        secStats.classList.add('hidden');
+        secQueue.classList.add('hidden');
+        secMessage.classList.remove('hidden');
+        secImport.classList.add('hidden');
+        if (mobileSticky) mobileSticky.classList.add('hidden');
+      } else if (activeMobileTab === 'import') {
+        secContacts.classList.add('hidden');
+        secStats.classList.add('hidden');
+        secQueue.classList.add('hidden');
+        secMessage.classList.add('hidden');
+        secImport.classList.remove('hidden');
+        if (mobileSticky) mobileSticky.classList.add('hidden');
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      initMobileView();
+    });
+
+    /* ==========================================================================
+       4. محرر الرسائل والقوالب والمتغيرات (Message Composer)
        ========================================================================== */
     function setupEventListeners() {
       const pasteInput = document.getElementById('bulkPasteInput');
@@ -759,7 +858,6 @@
         previewEl.className = 'break-words text-slate-400 italic';
       } else {
         previewEl.className = 'break-words';
-        // استبدال {الاسم} أو {name} باسم افتراضي "أحمد علي"
         const formatted = text
           .replace(/\{الاسم\}|\{name\}/gi, 'أحمد علي')
           .replace(/\{رقم\}|\{phone\}/gi, '01012345678');
@@ -789,64 +887,57 @@
       render();
 
       showToast('تم حفظ نص الرسالة وتصفير حالات الإرسال للجميع بنجاح!', 'success');
+      if (window.innerWidth < 768) {
+        setMobileTab('contacts'); // العودة التلقائية لقائمة الأرقام بالموبايل
+      }
     }
 
     /* ==========================================================================
-       4. المعالجة الذكية للأرقام وكود الدولة (Phone Parsing Engine)
+       5. المعالجة الذكية وتنسيق الأرقام (Phone Engine & Formatter)
        ========================================================================== */
     function normalizePhoneNumber(rawPhone, defaultCountryCode) {
       if (!rawPhone) return null;
 
-      // إزالة كل الحروف والرموز ما عدا الأرقام وعلامة الزائد
       let cleaned = rawPhone.toString().trim();
       
-      // تحويل الأرقام العربية/الفارسية إن وجدت إلى أرقام إنجليزية
       const arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
       cleaned = cleaned.replace(/[٠-٩]/g, d => arabicDigits.indexOf(d));
       cleaned = cleaned.replace(/[^0-9+]/g, '');
 
       if (!cleaned) return null;
 
-      // إذا كان يبدأ بـ +، احذف الـ +
       if (cleaned.startsWith('+')) {
         cleaned = cleaned.substring(1);
       }
       
-      // إذا كان يبدأ بـ 00 (مثل 0020...)، احذف الصفرين
       if (cleaned.startsWith('00')) {
         cleaned = cleaned.substring(2);
       }
 
-      // إذا اختار المستخدم عدم إضافة كود تلقائي
       if (defaultCountryCode === 'none') {
         return cleaned.length >= 7 ? cleaned : null;
       }
 
-      // معالجة كود الدولة الافتراضي
       const code = defaultCountryCode || '20';
 
       if (code === '20') {
-        // مصر: أرقام الموبايل تبدأ بـ 010, 011, 012, 015
         if (cleaned.startsWith('01') && cleaned.length === 11) {
           cleaned = '20' + cleaned.substring(1);
         } else if (cleaned.startsWith('1') && cleaned.length === 10) {
           cleaned = '20' + cleaned;
         }
       } else if (code === '966' || code === '971') {
-        // السعودية أو الإمارات: تبدأ بـ 05
         if (cleaned.startsWith('05') && cleaned.length === 10) {
           cleaned = code + cleaned.substring(1);
         } else if (cleaned.startsWith('5') && cleaned.length === 9) {
           cleaned = code + cleaned;
         }
       } else {
-        // أي دولة أخرى إذا كان يبدأ بصفر مفرد
         if (cleaned.startsWith('0')) {
           cleaned = code + cleaned.substring(1);
         }
       }
 
-      // التحقق من الحد الأدنى لطول الرقم الدولي (عادة 8 إلى 15 خانة)
       if (cleaned.length >= 8 && cleaned.length <= 16) {
         return cleaned;
       }
@@ -854,8 +945,23 @@
       return null;
     }
 
+    // دالة تنسيق رقم الهاتف ليظهر بمظهر مقروء وجميل
+    function formatPhoneDisplay(phone) {
+      if (!phone) return '';
+      const s = phone.toString();
+      // مصر: 20 101 234 5678
+      if (s.startsWith('20') && s.length === 12) {
+        return `${s.slice(0,2)} ${s.slice(2,5)} ${s.slice(5,8)} ${s.slice(8)}`;
+      }
+      // السعودية والإمارات: 966 50 123 4567
+      if ((s.startsWith('966') || s.startsWith('971')) && s.length === 12) {
+        return `${s.slice(0,3)} ${s.slice(3,5)} ${s.slice(5,8)} ${s.slice(8)}`;
+      }
+      return s;
+    }
+
     /* ==========================================================================
-       5. الإدخال المجمّع والاستيراد (Bulk Paste & Import)
+       6. الإدخال المجمّع والاستيراد (Bulk Paste & Import)
        ========================================================================== */
     function switchAddTab(tab) {
       const bulkBtn = document.getElementById('tabBulkBtn');
@@ -888,12 +994,9 @@
         let name = '';
         let rawPhone = '';
 
-        // كشف الصيغ الشائعة:
-        // 1. مفصول بفاصلة أو فاصلة منقوطة أو تاب: "أحمد, 01012345678" أو "01012345678, أحمد"
         if (line.includes(',') || line.includes(';') || line.includes('\t')) {
           const parts = line.split(/[,;\t]/).map(p => p.trim());
           if (parts.length >= 2) {
-            // أي جزء يحتوي على أرقام أكثر يكون هو الهاتف
             const digits0 = (parts[0].match(/\d/g) || []).length;
             const digits1 = (parts[1].match(/\d/g) || []).length;
             if (digits0 >= digits1) {
@@ -904,9 +1007,7 @@
               name = parts[0];
             }
           }
-        } 
-        // 2. مفصول بواصلة: "أحمد - 01012345678" أو "01012345678 - أحمد"
-        else if (line.includes('-')) {
+        } else if (line.includes('-')) {
           const parts = line.split('-').map(p => p.trim());
           if (parts.length >= 2) {
             const digits0 = (parts[0].match(/\d/g) || []).length;
@@ -919,15 +1020,12 @@
               name = parts[0];
             }
           }
-        } 
-        // 3. رقم فقط، أو اسم بين أقواس "01012345678 (محمد)"
-        else {
+        } else {
           const matchParens = line.match(/\((.*?)\)/);
           if (matchParens) {
             name = matchParens[1].trim();
             rawPhone = line.replace(/\(.*?\)/, '').trim();
           } else {
-            // استخراج الأرقام وما تبقى يعتبر اسماً إن وُجد
             const numberMatch = line.match(/[\d\+\s\-]{7,}/);
             if (numberMatch) {
               rawPhone = numberMatch[0];
@@ -994,6 +1092,9 @@
 
       if (addedCount > 0) {
         showToast(`تم استيراد ${addedCount} جهة اتصال بنجاح! ${duplicateCount > 0 ? `(تم استبعاد ${duplicateCount} مكرر)` : ''}`, 'success');
+        if (window.innerWidth < 768) {
+          setMobileTab('contacts'); // التحويل المباشر لقائمة الأرقام
+        }
       } else {
         showToast('جميع الأرقام المدخلة موجودة مسبقاً في القائمة!', 'info');
       }
@@ -1030,7 +1131,6 @@
         return;
       }
 
-      // فحص التكرار
       const isDuplicate = contacts.some(c => c.phone === validPhone);
       if (isDuplicate) {
         showToast('هذا الرقم مسجل بالفعل في القائمة!', 'warning');
@@ -1050,10 +1150,14 @@
       nameInput.value = '';
       phoneInput.value = '';
       showToast(`تمت إضافة ${name || validPhone} بنجاح`, 'success');
+      
+      if (window.innerWidth < 768) {
+        setMobileTab('contacts');
+      }
     }
 
     /* ==========================================================================
-       6. عمليات الإرسال والروابط (WhatsApp Link & Sending)
+       7. عمليات الإرسال والروابط (WhatsApp Link & Sending)
        ========================================================================== */
     function formatMessageForContact(template, contact) {
       if (!template) return '';
@@ -1066,6 +1170,7 @@
     function sendMessage(index) {
       if (!currentMessage.trim()) {
         showToast('يرجى حفظ نص الرسالة أولاً من قسم محرر الرسائل!', 'warning');
+        if (window.innerWidth < 768) setMobileTab('message');
         return;
       }
 
@@ -1076,10 +1181,8 @@
       const encodedMsg = encodeURIComponent(customizedText);
       const url = `https://wa.me/${contact.phone}?text=${encodedMsg}`;
 
-      // فتح الرابط في نافذة جديدة
       window.open(url, '_blank');
 
-      // تحديث الحالة وتاريخ الإرسال
       contact.sent = true;
       contact.sentAt = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
       saveContacts();
@@ -1091,6 +1194,7 @@
     function sendNextPending() {
       if (!currentMessage.trim()) {
         showToast('يرجى كتابة وحفظ نص الرسالة أولاً!', 'warning');
+        if (window.innerWidth < 768) setMobileTab('message');
         return;
       }
 
@@ -1119,7 +1223,7 @@
     }
 
     /* ==========================================================================
-       7. العرض والفلترة والبحث (Render & UI Engine)
+       8. العرض والفلترة والبحث (Render & UI Engine)
        ========================================================================== */
     function setStatusFilter(status) {
       activeFilter = status;
@@ -1128,8 +1232,8 @@
       const pendingBtn = document.getElementById('filterPendingBtn');
       const sentBtn = document.getElementById('filterSentBtn');
 
-      const activeClass = 'text-xs px-2.5 py-1 rounded-lg font-bold bg-white dark:bg-slate-900 text-emerald-600 shadow-sm transition';
-      const inactiveClass = 'text-xs px-2.5 py-1 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition';
+      const activeClass = 'text-xs py-1.5 px-2 rounded-lg font-bold bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm transition';
+      const inactiveClass = 'text-xs py-1.5 px-2 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition';
 
       allBtn.className = status === 'all' ? activeClass : inactiveClass;
       pendingBtn.className = status === 'pending' ? activeClass : inactiveClass;
@@ -1157,13 +1261,32 @@
       document.getElementById('statProgressBar').style.width = `${percent}%`;
       document.getElementById('listBadgeCount').textContent = total;
 
+      // تحديث عدادات الفلاتر وتبويب الموبايل
+      const mTabCount = document.getElementById('mTabCount');
+      if (mTabCount) mTabCount.textContent = total;
+      document.getElementById('filterCountAll').textContent = total;
+      document.getElementById('filterCountPending').textContent = pendingCount;
+      document.getElementById('filterCountSent').textContent = sentCount;
+
+      // شريط الموبايل السفلي
+      const stickyPending = document.getElementById('stickyPendingCount');
+      const stickyButtonText = document.getElementById('stickyButtonText');
+      if (stickyPending) stickyPending.textContent = pendingCount;
+      if (stickyButtonText) {
+        const nextPendingContact = contacts.find(c => !c.sent);
+        if (nextPendingContact) {
+          const targetName = nextPendingContact.name || ('+' + nextPendingContact.phone);
+          stickyButtonText.textContent = `إرسال التالي: ${targetName}`;
+        } else {
+          stickyButtonText.textContent = `تم إرسال الكل بنجاح ✓`;
+        }
+      }
+
       // 2. تطبيق البحث والفلتر
       const filtered = contacts.map((c, originalIndex) => ({ ...c, originalIndex })).filter(item => {
-        // فلتر الحالة
         if (activeFilter === 'sent' && !item.sent) return false;
         if (activeFilter === 'pending' && item.sent) return false;
 
-        // فلتر البحث
         if (searchQuery) {
           const matchName = item.name && item.name.toLowerCase().includes(searchQuery);
           const matchPhone = item.phone.includes(searchQuery);
@@ -1196,9 +1319,10 @@
       // توليد الصفوف والبطاقات
       filtered.forEach((item, index) => {
         const origIdx = item.originalIndex;
+        const formattedPhone = formatPhoneDisplay(item.phone);
 
-        // الحالة
-        const statusBadge = item.sent 
+        // بادج الحالة للديسكتوب
+        const statusBadgeDesktop = item.sent 
           ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                <i class="fa-solid fa-check text-[10px]"></i> تم الإرسال
              </span>`
@@ -1213,26 +1337,31 @@
           <td class="py-3 px-4 text-center text-xs text-slate-400 font-mono">${index + 1}</td>
           <td class="py-3 px-4">
             <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold text-xs flex-shrink-0">
-                ${(item.name ? item.name.charAt(0) : '؟')}
+              <div class="w-8 h-8 rounded-full ${item.sent ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'} flex items-center justify-center font-bold text-xs flex-shrink-0">
+                ${item.name ? item.name.charAt(0) : '<i class="fa-solid fa-phone text-[10px]"></i>'}
               </div>
-              <span class="font-semibold text-slate-800 dark:text-slate-100">${item.name || '<span class="text-slate-400 font-normal">بدون اسم</span>'}</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-100">${item.name || `<span class="font-mono text-xs text-slate-500" dir="ltr">+${formattedPhone}</span>`}</span>
             </div>
           </td>
           <td class="py-3 px-4 font-mono text-xs text-slate-600 dark:text-slate-300" dir="ltr">
-            +${item.phone}
+            +${formattedPhone}
           </td>
           <td class="py-3 px-4 text-center">
-            ${statusBadge}
+            ${statusBadgeDesktop}
           </td>
           <td class="py-3 px-4 text-center text-xs text-slate-400 font-mono">
             ${item.sentAt || '--:--'}
           </td>
           <td class="py-3 px-4 text-center">
             <div class="inline-flex items-center gap-1.5">
-              <button onclick="sendMessage(${origIdx})" class="inline-flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm" title="إرسال عبر واتساب">
-                <i class="fa-brands fa-whatsapp"></i> إرسال
-              </button>
+              ${item.sent 
+                ? `<button onclick="sendMessage(${origIdx})" class="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm" title="إعادة الإرسال">
+                     <i class="fa-solid fa-rotate-right text-[10px] text-emerald-600"></i> إعادة
+                   </button>`
+                : `<button onclick="sendMessage(${origIdx})" class="inline-flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm" title="إرسال عبر واتساب">
+                     <i class="fa-brands fa-whatsapp"></i> إرسال
+                   </button>`
+              }
               <button onclick="deleteContact(${origIdx})" class="p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 transition" title="حذف">
                 <i class="fa-solid fa-trash-can text-xs"></i>
               </button>
@@ -1241,37 +1370,77 @@
         `;
         tableBody.appendChild(tr);
 
-        // 2. بطاقة الموبايل الذكية (Mobile Responsive Card)
+        // 2. بطاقة الموبايل الذكية الأنيقة والمدمجة (Compact & Premium Mobile Card)
         const card = document.createElement('div');
-        card.className = 'p-4 space-y-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition';
+        const isSent = item.sent;
+        
+        card.className = `p-3 bg-white dark:bg-slate-900 rounded-2xl border ${isSent ? 'border-emerald-200/80 dark:border-emerald-900/40 bg-emerald-50/10' : 'border-slate-200/90 dark:border-slate-800'} shadow-sm flex items-center justify-between gap-2.5 transition active:scale-[0.99]`;
+
+        // عنوان جهة الاتصال
+        const mainTitle = item.name 
+          ? `<h4 class="font-bold text-sm text-slate-900 dark:text-white truncate leading-tight">${item.name}</h4>`
+          : `<h4 class="font-bold text-sm font-mono text-slate-800 dark:text-slate-100 tracking-wide leading-tight" dir="ltr">+${formattedPhone}</h4>`;
+
+        // سطر التفاصيل الصغير
+        const subDetails = item.name
+          ? `<span class="font-mono text-xs text-slate-400 dark:text-slate-400" dir="ltr">+${formattedPhone}</span>`
+          : `<span class="text-[11px] text-slate-400">عميل جديد</span>`;
+
+        // شارة الحالة المصغرة للموبايل
+        const mobileBadge = isSent 
+          ? `<span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100/70 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded-md">
+               <i class="fa-solid fa-check-double text-[8px]"></i> أرسل ${item.sentAt || ''}
+             </span>`
+          : `<span class="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-100/70 dark:bg-amber-950/60 px-1.5 py-0.5 rounded-md">
+               <i class="fa-solid fa-hourglass-start text-[8px]"></i> قيد الانتظار
+             </span>`;
+
         card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-              <div class="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold text-xs flex-shrink-0">
-                ${(item.name ? item.name.charAt(0) : '؟')}
+          <!-- الجانب الأيمن: الأيقونة والبيانات -->
+          <div class="flex items-center gap-2.5 min-w-0 flex-1">
+            
+            <!-- الصورة الرمزية -->
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs flex-shrink-0 ${
+              isSent 
+                ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/30' 
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700'
+            }">
+              ${isSent 
+                ? '<i class="fa-solid fa-check text-sm"></i>' 
+                : (item.name ? item.name.charAt(0) : '<i class="fa-solid fa-phone text-emerald-600 text-xs"></i>')
+              }
+            </div>
+
+            <!-- معلومات الاسم والرقم والحالة -->
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2">
+                ${mainTitle}
               </div>
-              <div>
-                <h4 class="font-bold text-sm text-slate-900 dark:text-white leading-tight">
-                  ${item.name || 'بدون اسم'}
-                </h4>
-                <span class="font-mono text-xs text-slate-500 dark:text-slate-400 block" dir="ltr">+${item.phone}</span>
+              <div class="flex items-center gap-2 mt-0.5">
+                ${subDetails}
+                <span class="text-slate-300 dark:text-slate-700">•</span>
+                ${mobileBadge}
               </div>
             </div>
-            ${statusBadge}
+
           </div>
 
-          <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/80 text-xs">
-            <span class="text-slate-400 text-[11px]">
-              ${item.sent ? `<i class="fa-solid fa-clock text-[10px] ml-1"></i> أرسل: ${item.sentAt}` : 'في انتظار الإرسال'}
-            </span>
-            <div class="flex items-center gap-2">
-              <button onclick="sendMessage(${origIdx})" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1">
-                <i class="fa-brands fa-whatsapp text-sm"></i> إرسال الآن
-              </button>
-              <button onclick="deleteContact(${origIdx})" class="p-1.5 text-slate-400 hover:text-red-500 transition">
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
-            </div>
+          <!-- الجانب الأيسر: زر الإجراء الذكي وزر الحذف -->
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            ${isSent 
+              ? `<button onclick="sendMessage(${origIdx})" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition" title="إعادة الإرسال">
+                   <i class="fa-solid fa-rotate-right text-[10px] text-emerald-600"></i>
+                   <span>إعادة</span>
+                 </button>`
+              : `<button onclick="sendMessage(${origIdx})" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 shadow-sm shadow-emerald-600/30 active:scale-95 transition">
+                   <i class="fa-brands fa-whatsapp text-sm"></i>
+                   <span>إرسال</span>
+                 </button>`
+            }
+
+            <button onclick="deleteContact(${origIdx})" class="w-7 h-7 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center justify-center transition" title="حذف">
+              <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
           </div>
         `;
         mobileCards.appendChild(card);
@@ -1279,7 +1448,7 @@
     }
 
     /* ==========================================================================
-       8. تصدير البيانات وعينات التجربة (Export & Samples)
+       9. تصدير البيانات وعينات التجربة (Export & Samples)
        ========================================================================== */
     function exportToCSV() {
       if (contacts.length === 0) {
@@ -1287,7 +1456,7 @@
         return;
       }
 
-      let csvContent = "\uFEFF"; // إضافة BOM لدعم اللغة العربية في إكسيل
+      let csvContent = "\uFEFF";
       csvContent += "الاسم,رقم الهاتف,الحالة,وقت الإرسال\n";
 
       contacts.forEach(c => {
@@ -1314,9 +1483,9 @@
       const samples = [
         { name: "المهندس أحمد سمير", phone: "201012345671", sent: false, sentAt: null },
         { name: "سارة عبد الرحمن", phone: "201098765432", sent: false, sentAt: null },
-        { name: "الدكتور محمود فؤاد", phone: "201123456789", sent: false, sentAt: null },
-        { name: "شركة النور للبرمجيات", phone: "201287654321", sent: false, sentAt: null },
-        { name: "مريم خالد", phone: "201555554321", sent: false, sentAt: null }
+        { name: "", phone: "201123456789", sent: false, sentAt: null },
+        { name: "شركة النور للبرمجيات", phone: "201287654321", sent: true, sentAt: "10:15 ص" },
+        { name: "", phone: "201555554321", sent: false, sentAt: null }
       ];
 
       contacts = [...contacts, ...samples];
@@ -1329,10 +1498,13 @@
 
       render();
       showToast('تمت إضافة 5 أرقام تجريبية لتجربة التطبيق!', 'success');
+      if (window.innerWidth < 768) {
+        setMobileTab('contacts');
+      }
     }
 
     /* ==========================================================================
-       9. نظام التنبيهات المخصص (Custom Toast & Modal)
+       10. نظام التنبيهات المخصص (Custom Toast & Modal)
        ========================================================================== */
     let confirmModalActive = false;
 
@@ -1362,7 +1534,6 @@
 
       container.appendChild(toast);
 
-      // Trigger animation
       requestAnimationFrame(() => {
         toast.classList.remove('translate-y-3', 'opacity-0');
       });
