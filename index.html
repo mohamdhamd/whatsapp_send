@@ -46,7 +46,6 @@
   </script>
 
   <style>
-    /* أنماط مخصصة لتحسين التفاعل والجمالية */
     body {
       font-family: 'Cairo', sans-serif;
       -webkit-tap-highlight-color: transparent;
@@ -85,7 +84,7 @@
       background-image: radial-gradient(#1e293b 0.75px, transparent 0.75px);
     }
 
-    /* فقاعة رسالة واتساب الواقعية */
+    /* فقاعة رسالة واتساب */
     .whatsapp-bubble {
       position: relative;
       background: #ffffff;
@@ -112,7 +111,6 @@
       border-left-color: #005c4b;
     }
 
-    /* إخفاء إدخال الملف الافتراضي */
     input[type="file"] {
       display: none;
     }
@@ -135,29 +133,26 @@
               WhatsApp Sender <span class="text-emerald-500 font-extrabold">PRO</span>
             </h1>
             <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-              v2.6
+              v3.0
             </span>
           </div>
           <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">
-            إرسال مجمّع احترافي، إدارة قوائم ذكية، وتخصيص رسائل ديناميكي
+            مجموعات متعددة، تخصيص ملاحظات، استبعاد أرقام، وإرسال مجمّع ذكي
           </p>
         </div>
       </div>
 
       <!-- أدوات الرأس السريعة -->
       <div class="flex items-center gap-1.5 sm:gap-2">
-        <!-- زر التبديل بين الوضع الليلي والنهاري -->
         <button onclick="toggleDarkMode()" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="تبديل الوضع">
           <i id="themeIcon" class="fa-solid fa-moon text-base"></i>
         </button>
 
-        <!-- زر تصدير النتائج -->
         <button onclick="exportToCSV()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="تصدير الأرقام والحالة إلى ملف CSV">
           <i class="fa-solid fa-file-arrow-down text-emerald-600"></i>
           <span>تصدير CSV</span>
         </button>
 
-        <!-- زر عينة تجريبية سريعة -->
         <button onclick="loadSampleData()" class="text-xs font-bold px-2.5 sm:px-3 py-2 rounded-xl text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition" title="شحن بيانات تجريبية لاختبار المنظومة">
           <i class="fa-solid fa-wand-magic-sparkles ml-1"></i> <span class="hidden xs:inline">عينة تجريبية</span><span class="xs:hidden">عينة</span>
         </button>
@@ -167,7 +162,46 @@
   </header>
 
   <!-- ==================== المحتوى الرئيسي (Main Container) ==================== -->
-  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-5 sm:space-y-6">
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6">
+
+    <!-- ================= شريط إدارة المجموعات المتعددة (Multi-Groups Bar) ================= -->
+    <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-3 sm:p-4 shadow-card">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        
+        <!-- عنوان المجموعة الحالية والاختيار -->
+        <div class="flex items-center gap-2.5 flex-1 min-w-0">
+          <div class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center text-sm flex-shrink-0">
+            <i class="fa-solid fa-folder-tree"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <label for="groupSelect" class="text-xs font-bold text-slate-500 dark:text-slate-400">المجموعة النشطة:</label>
+              <span id="activeGroupBadge" class="text-[11px] font-bold text-purple-700 dark:text-purple-300 bg-purple-100/70 dark:bg-purple-950/60 px-2 py-0.5 rounded-md">
+                0 أرقام
+              </span>
+            </div>
+            <select id="groupSelect" onchange="switchGroup(this.value)" class="w-full sm:w-auto min-w-[200px] mt-1 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-2 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+              <!-- يتم توليد المجموعات ديناميكياً هنا -->
+            </select>
+          </div>
+        </div>
+
+        <!-- أزرار إدارة المجموعات -->
+        <div class="flex items-center gap-2 justify-end">
+          <button onclick="openNewGroupModal()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl text-white bg-purple-600 hover:bg-purple-700 shadow-sm transition">
+            <i class="fa-solid fa-folder-plus"></i>
+            <span>مجموعة جديدة</span>
+          </button>
+          <button onclick="openRenameGroupModal()" class="p-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="تعديل اسم المجموعة الحالية">
+            <i class="fa-solid fa-pen-to-square"></i>
+          </button>
+          <button onclick="confirmDeleteGroup()" class="p-2 rounded-xl text-xs font-bold text-red-500 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/60 transition" title="حذف المجموعة الحالية">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+
+      </div>
+    </section>
 
     <!-- ================= تبويبات التنقل الخاصة بشاشات الموبايل (Mobile View Switcher) ================= -->
     <div class="block md:hidden">
@@ -207,7 +241,7 @@
           <i class="fa-solid fa-clock-rotate-left"></i>
         </div>
         <div>
-          <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 block">قيد الانتظار</span>
+          <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 block">قيد الانتظار النشط</span>
           <span id="statPending" class="text-lg sm:text-2xl font-black text-amber-600 dark:text-amber-400 font-mono">0</span>
         </div>
       </div>
@@ -223,17 +257,16 @@
         </div>
       </div>
 
-      <!-- نسبة الإنجاز -->
+      <!-- نسبة الإنجاز والتعليق -->
       <div class="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-card flex items-center gap-2.5 sm:gap-3 col-span-2 lg:col-span-1">
         <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center text-base sm:text-lg flex-shrink-0">
           <i class="fa-solid fa-chart-pie"></i>
         </div>
         <div class="flex-1">
           <div class="flex justify-between items-center mb-1">
-            <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400">نسبة الإنجاز</span>
+            <span class="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400">الإنجاز (<span id="statSuspendedText" class="text-red-500 font-bold">0 معلق</span>)</span>
             <span id="statPercentText" class="text-xs font-bold text-purple-600 dark:text-purple-400 font-mono">0%</span>
           </div>
-          <!-- شريط تقدم تفاعلي -->
           <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
             <div id="statProgressBar" class="h-full bg-gradient-to-r from-emerald-500 to-purple-500 transition-all duration-500 ease-out" style="width: 0%"></div>
           </div>
@@ -290,7 +323,7 @@
               rows="4" 
               oninput="updateMessagePreview()"
               class="w-full p-3.5 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent focus:outline-none transition leading-relaxed resize-y" 
-              placeholder="اكتب نص الرسالة هنا... مثال: مرحباً {الاسم}، يسعدنا التواصل معك لإبلاغك بآخر التحديثات..."></textarea>
+              placeholder="اكتب نص الرسالة هنا... مثال: مرحباً {الاسم}، يسعدنا التواصل معك..."></textarea>
             
             <div class="flex items-center justify-between mt-1 text-[11px] text-slate-400 px-1">
               <span id="charCounter">0 حرف | ~0 كلمة</span>
@@ -352,10 +385,9 @@
               <span class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 flex items-center justify-center text-sm">
                 <i class="fa-solid fa-address-book"></i>
               </span>
-              <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">إضافة المستلمين</h2>
+              <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">إضافة للمجموعة الحالية</h2>
             </div>
 
-            <!-- أزرار التبديل بين اللصق المجمّع والإضافة الفردية -->
             <div class="flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200/80 dark:border-slate-700/80">
               <button id="tabBulkBtn" onclick="switchAddTab('bulk')" class="text-xs px-3 py-1 font-bold rounded-lg transition bg-white dark:bg-slate-900 text-emerald-600 shadow-sm">
                 <i class="fa-solid fa-layer-group ml-1"></i> لصق مجمّع
@@ -394,9 +426,8 @@
           <div id="bulkFormContainer" class="space-y-3">
             <div class="flex items-center justify-between">
               <label class="text-xs font-bold text-slate-700 dark:text-slate-300">
-                الصق قائمة الأرقام والأسماء هنا دفعة واحدة:
+                الصق قائمة الأرقام والأسماء والملاحظات:
               </label>
-              <!-- زر رفع ملف نصي أو CSV -->
               <label for="fileUploadInput" class="cursor-pointer text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
                 <i class="fa-solid fa-file-arrow-up"></i> رفع ملف (CSV/TXT)
               </label>
@@ -407,11 +438,10 @@
               id="bulkPasteInput" 
               rows="6" 
               class="w-full p-3 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-800 dark:text-slate-200 font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none transition leading-relaxed resize-y" 
-              placeholder="يدعم الصيغ التالية (سطر لكل عميل):
+              placeholder="يدعم مختلف الصيغ:
 01012345678
 01198765432 - محمد أحمد
-أحمد محمود , 01234567890
-201011112223 (عمرو سعيد)
+أحمد محمود , 01234567890 , ملاحظة: طلب اتصال
 مباشرة من عمود الإكسيل!"></textarea>
 
             <div class="flex items-center justify-between text-[11px] text-slate-400">
@@ -422,7 +452,7 @@
             <div class="flex items-center gap-2">
               <label class="inline-flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 cursor-pointer select-none">
                 <input type="checkbox" id="skipDuplicatesCheck" checked class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300">
-                <span>استبعاد الأرقام المكررة تلقائياً</span>
+                <span>استبعاد الأرقام المكررة في نفس المجموعة</span>
               </label>
             </div>
 
@@ -442,7 +472,11 @@
             <div>
               <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">رقم الهاتف:</label>
               <input type="text" id="singlePhone" placeholder="مثال: 01012345678 أو 201012345678" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-100 font-mono text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-              <span class="text-[11px] text-slate-400 mt-1 block">إذا كتبت الرقم بدون كود الدولة فسيتم تطبيق كود الدولة المختار تلقائياً.</span>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ملاحظة خاصة بالعميل (اختياري):</label>
+              <input type="text" id="singleNotes" placeholder="مثال: مهتم بالعرض - اتصل بعد الظهر" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
             </div>
 
             <button onclick="processSingleAdd()" class="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-emerald-600/20 transition">
@@ -468,28 +502,25 @@
           <div>
             <h3 class="text-sm sm:text-base font-bold">مساعد إرسال الحملة (Queue Assistant)</h3>
             <p class="text-xs text-emerald-100">
-              إرسال منظم ومتسلسل لتجنب حظر الأرقام وتسهيل المتابعة
+              يتخطى الأرقام المعلّقة تلقائياً ويرسل للأرقام النشطة فقط
             </p>
           </div>
         </div>
 
         <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-          <!-- زر إرسال الرقم التالي -->
           <button onclick="sendNextPending()" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-white text-emerald-800 hover:bg-emerald-50 active:bg-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold shadow transition">
             <i class="fa-solid fa-forward-step"></i>
             <span>إرسال الرقم التالي فوراً</span>
           </button>
 
-          <!-- إعادة تعيين جميع الحالات إلى قيد الانتظار -->
           <button onclick="resetAllStatuses()" class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 transition" title="إعادة تعيين الكل إلى قيد الانتظار">
             <i class="fa-solid fa-rotate-left"></i>
             <span class="hidden md:inline">تصفير الحالات</span>
           </button>
 
-          <!-- زر حذف الكل -->
-          <button onclick="confirmClearAll()" class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-red-200 bg-red-500/20 hover:bg-red-500/30 transition" title="حذف جميع جهات الاتصال">
+          <button onclick="confirmClearAll()" class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-red-200 bg-red-500/20 hover:bg-red-500/30 transition" title="حذف جميع جهات الاتصال في المجموعة الحالية">
             <i class="fa-solid fa-trash-can"></i>
-            <span class="hidden md:inline">مسح القائمة</span>
+            <span class="hidden md:inline">مسح المجموعة</span>
           </button>
         </div>
 
@@ -510,7 +541,6 @@
             </span>
           </div>
 
-          <!-- زر تصدير سريع يظهر في الموبايل -->
           <button onclick="exportToCSV()" class="sm:hidden inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800">
             <i class="fa-solid fa-file-arrow-down text-emerald-600 text-xs"></i>
             <span>تصدير CSV</span>
@@ -520,27 +550,30 @@
         <!-- البحث وفلتر الحالة في شريط متجاوب بالكامل -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
           
-          <!-- حقل البحث الفوري -->
+          <!-- حقل البحث الفوري الشامل (اسم، رقم، ملاحظات) -->
           <div class="relative flex-1">
             <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
             <input 
               type="text" 
               id="searchInput" 
               oninput="filterContacts()" 
-              placeholder="بحث بالاسم أو الرقم..." 
+              placeholder="بحث بالاسم أو الرقم أو الملاحظة..." 
               class="w-full pr-8 pl-3 py-2 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
           </div>
 
-          <!-- فلاتر الحالة (3 أزرار متساوية أنيقة تدعم الموبايل) -->
-          <div class="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/80 text-center">
-            <button onclick="setStatusFilter('all')" id="filterAllBtn" class="text-xs py-1.5 px-2 rounded-lg font-bold bg-white dark:bg-slate-900 text-emerald-600 shadow-sm transition">
+          <!-- فلاتر الحالة (4 فلاتر: الكل، بالانتظار، أرسل، معلق) -->
+          <div class="grid grid-cols-4 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/80 text-center">
+            <button onclick="setStatusFilter('all')" id="filterAllBtn" class="text-[11px] sm:text-xs py-1.5 px-1 sm:px-2 rounded-lg font-bold bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm transition">
               الكل (<span id="filterCountAll">0</span>)
             </button>
-            <button onclick="setStatusFilter('pending')" id="filterPendingBtn" class="text-xs py-1.5 px-2 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
-              بالانتظار (<span id="filterCountPending">0</span>)
+            <button onclick="setStatusFilter('pending')" id="filterPendingBtn" class="text-[11px] sm:text-xs py-1.5 px-1 sm:px-2 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+              نشط (<span id="filterCountPending">0</span>)
             </button>
-            <button onclick="setStatusFilter('sent')" id="filterSentBtn" class="text-xs py-1.5 px-2 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+            <button onclick="setStatusFilter('sent')" id="filterSentBtn" class="text-[11px] sm:text-xs py-1.5 px-1 sm:px-2 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
               أُرسل (<span id="filterCountSent">0</span>)
+            </button>
+            <button onclick="setStatusFilter('suspended')" id="filterSuspendedBtn" class="text-[11px] sm:text-xs py-1.5 px-1 sm:px-2 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+              معلّق (<span id="filterCountSuspended">0</span>)
             </button>
           </div>
 
@@ -554,7 +587,7 @@
           <thead>
             <tr class="bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200/60 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
               <th class="py-3 px-4 w-12 text-center">#</th>
-              <th class="py-3 px-4">اسم العميل</th>
+              <th class="py-3 px-4">اسم العميل والملاحظات</th>
               <th class="py-3 px-4">رقم الهاتف</th>
               <th class="py-3 px-4 text-center">الحالة</th>
               <th class="py-3 px-4 text-center">وقت الإرسال</th>
@@ -577,9 +610,9 @@
         <div class="w-16 h-16 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl mx-auto mb-3">
           <i class="fa-solid fa-address-book"></i>
         </div>
-        <h4 class="text-sm sm:text-base font-bold text-slate-800 dark:text-white mb-1">لا توجد جهات اتصال مضافة بعد</h4>
+        <h4 class="text-sm sm:text-base font-bold text-slate-800 dark:text-white mb-1">هذه المجموعة فارغة حالياً</h4>
         <p class="text-xs text-slate-400 max-w-sm mx-auto mb-4">
-          يمكنك لصق قائمة أرقام مجمعة من الإكسيل أو المفكرة، أو تجربة عينة جاهزة فوراً.
+          يمكنك لصق قائمة أرقام مجمعة من الإكسيل، أو نقل/إضافة جهات اتصال إليها.
         </p>
         <button onclick="loadSampleData()" class="inline-flex items-center gap-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl transition shadow">
           <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -601,6 +634,71 @@
       <i class="fa-solid fa-forward-step text-xs"></i>
       <span id="stickyButtonText">إرسال الرقم التالي فوراً</span>
     </button>
+  </div>
+
+  <!-- ==================== النافذة المنبثقة لتعديل جهة الاتصال والملاحظات (Edit Contact Modal) ==================== -->
+  <div id="editContactModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200 p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-5 border border-slate-200 dark:border-slate-800 shadow-2xl scale-95 transition-transform duration-200" id="editModalBox">
+      
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center text-sm">
+            <i class="fa-solid fa-user-pen"></i>
+          </span>
+          <h3 class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">تعديل بيانات جهة الاتصال</h3>
+        </div>
+        <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <form onsubmit="saveEditedContact(event)" class="space-y-3.5 text-xs">
+        <input type="hidden" id="editContactId">
+
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">اسم العميل:</label>
+          <input type="text" id="editContactName" placeholder="اسم العميل..." class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">رقم الهاتف (دولي بدون +):</label>
+          <input type="text" id="editContactPhone" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-mono rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">المجموعة:</label>
+          <select id="editContactGroup" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs">
+            <!-- خيارات المجموعات -->
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">ملاحظات خاصة بالعميل:</label>
+          <textarea id="editContactNotes" rows="2" placeholder="أضف أي ملاحظات تهمك عن العميل..." class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs resize-y"></textarea>
+        </div>
+
+        <!-- خيار تعليق الرقم واستبعاده -->
+        <div class="bg-amber-50 dark:bg-amber-950/40 p-3 rounded-xl border border-amber-200/80 dark:border-amber-800/60">
+          <label class="flex items-center justify-between cursor-pointer">
+            <div>
+              <span class="font-bold text-amber-800 dark:text-amber-300 block">تعليق هذا الرقم (استبعاد من الإرسال)</span>
+              <span class="text-[11px] text-amber-600/80 dark:text-amber-400 block">لن يتم إرسال أي رسالة لهذا الرقم أثناء تشغيل الحملة التلقائية.</span>
+            </div>
+            <input type="checkbox" id="editContactSuspended" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500 border-amber-300">
+          </label>
+        </div>
+
+        <div class="flex items-center gap-2 pt-2">
+          <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl transition shadow">
+            حفظ التعديلات
+          </button>
+          <button type="button" onclick="closeEditModal()" class="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold py-2.5 rounded-xl transition">
+            إلغاء
+          </button>
+        </div>
+      </form>
+
+    </div>
   </div>
 
   <!-- ==================== النافذة المنبثقة للتأكيد (Confirm Modal) ==================== -->
@@ -630,16 +728,17 @@
   <!-- ==================== المحرك البرمجي الرئيسي (JavaScript Engine) ==================== -->
   <script>
     /* ==========================================================================
-       1. إدارة الحالة العامة والتخزين المحلي (State Management)
+       1. إدارة الحالة والتخزين المحلي والمجموعات (State & Multi-Groups)
        ========================================================================== */
+    let groups = [];
+    let activeGroupId = 'grp_default';
     let contacts = [];
     let currentMessage = '';
-    let activeFilter = 'all';
+    let activeFilter = 'all'; // 'all', 'pending', 'sent', 'suspended'
     let searchQuery = '';
     let isDarkMode = false;
-    let activeMobileTab = 'contacts'; // 'contacts', 'message', 'import'
+    let activeMobileTab = 'contacts';
 
-    // قوالب الرسائل الافتراضية
     const messageTemplates = {
       welcome: "أهلاً بك يا {الاسم} في منصتنا! يسعدنا انضمامك إلينا ونتمنى لك تجربة ممتعة ومميزة. لأي استفسار نحن بخدمتك دائماً.",
       promo: "مرحباً {الاسم}! 🎉\nيسرنا تقديم خصم حصري 20% لفترة محدودة على جميع خدماتنا.\nاستخدم الكود: PROMO20\nللتفاصيل تواصل معنا مباشرة!",
@@ -647,35 +746,72 @@
       feedback: "مرحباً {الاسم} 🌟\nرأيك يهمنا جداً! نتمنى منك تقييم تجربتك الأخيرة معنا ومشاركتنا أي ملاحظات لتطوير خدماتنا."
     };
 
-    // التهيئة عند تحميل الصفحة
     window.addEventListener('DOMContentLoaded', () => {
       loadSettings();
       loadState();
       setupEventListeners();
       initMobileView();
+      renderGroupSelector();
       render();
       updateMessagePreview();
     });
 
     function loadState() {
       try {
+        // تحميل المجموعات
+        const storedGroups = localStorage.getItem('wa_pro_groups');
+        if (storedGroups) {
+          groups = JSON.parse(storedGroups);
+        }
+        if (!groups || groups.length === 0) {
+          groups = [
+            { id: 'grp_default', name: 'المجموعة العامة', createdAt: new Date().toISOString() }
+          ];
+          saveGroups();
+        }
+
+        activeGroupId = localStorage.getItem('wa_pro_active_group') || groups[0].id;
+        // التأكد من وجود المجموعة النشطة
+        if (!groups.some(g => g.id === activeGroupId)) {
+          activeGroupId = groups[0].id;
+        }
+
+        // تحميل جهات الاتصال مع ترقية البيانات القديمة
         const storedContacts = localStorage.getItem('wa_pro_contacts');
         contacts = storedContacts ? JSON.parse(storedContacts) : [];
 
-        // دعم التوافق مع النسخة القديمة إذا كانت موجودة
-        if (contacts.length === 0) {
-          const oldContacts = localStorage.getItem('wa_contacts');
-          if (oldContacts) {
-            contacts = JSON.parse(oldContacts);
-            saveContacts();
+        // ترقية الأرقام القديمة وإعطائها معرف مجموعة ومعرف فريد وملاحظات وحالة تعليق
+        let needsSave = false;
+        contacts = contacts.map(c => {
+          let updated = { ...c };
+          if (!updated.id) {
+            updated.id = 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+            needsSave = true;
           }
+          if (!updated.groupId) {
+            updated.groupId = 'grp_default';
+            needsSave = true;
+          }
+          if (updated.notes === undefined) {
+            updated.notes = '';
+            needsSave = true;
+          }
+          if (updated.suspended === undefined) {
+            updated.suspended = false;
+            needsSave = true;
+          }
+          return updated;
+        });
+
+        if (needsSave) {
+          saveContacts();
         }
 
-        const storedMsg = localStorage.getItem('wa_pro_message') || localStorage.getItem('wa_message') || '';
+        const storedMsg = localStorage.getItem('wa_pro_message') || '';
         currentMessage = storedMsg;
         document.getElementById('messageInput').value = currentMessage;
       } catch (e) {
-        console.error('Error loading state from localStorage:', e);
+        console.error('Error loading state:', e);
         contacts = [];
       }
     }
@@ -688,6 +824,15 @@
       }
     }
 
+    function saveGroups() {
+      try {
+        localStorage.setItem('wa_pro_groups', JSON.stringify(groups));
+        localStorage.setItem('wa_pro_active_group', activeGroupId);
+      } catch (e) {
+        console.error('Error saving groups:', e);
+      }
+    }
+
     function saveMessage() {
       try {
         localStorage.setItem('wa_pro_message', currentMessage);
@@ -697,12 +842,10 @@
     }
 
     function loadSettings() {
-      // قراءة الوضع الليلي
       isDarkMode = localStorage.getItem('wa_pro_theme') === 'dark' || 
                    (!localStorage.getItem('wa_pro_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
       applyTheme();
 
-      // كود الدولة الافتراضي
       const savedCode = localStorage.getItem('wa_pro_country_code');
       if (savedCode) {
         document.getElementById('defaultCountryCode').value = savedCode;
@@ -710,7 +853,96 @@
     }
 
     /* ==========================================================================
-       2. المظهر والوضع الليلي (Theme & Aesthetics)
+       2. إدارة المجموعات (Groups Functions)
+       ========================================================================== */
+    function renderGroupSelector() {
+      const select = document.getElementById('groupSelect');
+      select.innerHTML = '';
+
+      groups.forEach(grp => {
+        const count = contacts.filter(c => c.groupId === grp.id).length;
+        const opt = document.createElement('option');
+        opt.value = grp.id;
+        opt.textContent = `${grp.name} (${count})`;
+        if (grp.id === activeGroupId) opt.selected = true;
+        select.appendChild(opt);
+      });
+
+      const currentGroupContacts = contacts.filter(c => c.groupId === activeGroupId).length;
+      document.getElementById('activeGroupBadge').textContent = `${currentGroupContacts} أرقام`;
+    }
+
+    function switchGroup(groupId) {
+      activeGroupId = groupId;
+      saveGroups();
+      renderGroupSelector();
+      render();
+      showToast(`تم التبديل إلى: ${getActiveGroupName()}`, 'info');
+    }
+
+    function getActiveGroupName() {
+      const g = groups.find(x => x.id === activeGroupId);
+      return g ? g.name : 'المجموعة العامة';
+    }
+
+    function openNewGroupModal() {
+      const name = prompt('أدخل اسم المجموعة الجديدة (مثال: عملاء كورس الصيف):');
+      if (!name || !name.trim()) return;
+
+      const newId = 'grp_' + Date.now();
+      groups.push({
+        id: newId,
+        name: name.trim(),
+        createdAt: new Date().toISOString()
+      });
+
+      activeGroupId = newId;
+      saveGroups();
+      renderGroupSelector();
+      render();
+      showToast(`تم إنشاء المجموعة: ${name.trim()}`, 'success');
+    }
+
+    function openRenameGroupModal() {
+      const current = groups.find(g => g.id === activeGroupId);
+      if (!current) return;
+
+      const newName = prompt('تعديل اسم المجموعة:', current.name);
+      if (!newName || !newName.trim() || newName.trim() === current.name) return;
+
+      current.name = newName.trim();
+      saveGroups();
+      renderGroupSelector();
+      showToast('تم تعديل اسم المجموعة بنجاح', 'success');
+    }
+
+    function confirmDeleteGroup() {
+      if (groups.length <= 1) {
+        showToast('لا يمكنك حذف المجموعة الوحيدة المتبقية!', 'warning');
+        return;
+      }
+
+      const current = groups.find(g => g.id === activeGroupId);
+      const count = contacts.filter(c => c.groupId === activeGroupId).length;
+
+      openModal(
+        `حذف مجموعة "${current.name}"؟`,
+        `سيتم حذف هذه المجموعة وجميع الأرقام المسجلة بها (${count} رقم) بشكل نهائي!`,
+        () => {
+          contacts = contacts.filter(c => c.groupId !== activeGroupId);
+          groups = groups.filter(g => g.id !== activeGroupId);
+          activeGroupId = groups[0].id;
+          saveContacts();
+          saveGroups();
+          renderGroupSelector();
+          render();
+          showToast('تم حذف المجموعة بنجاح', 'info');
+        }
+      );
+    }
+
+    /* ==========================================================================
+       3. المظهر والوضع الليلي (Theme & Aesthetics)
        ========================================================================== */
     function toggleDarkMode() {
       isDarkMode = !isDarkMode;
@@ -731,7 +963,7 @@
     }
 
     /* ==========================================================================
-       3. تبويبات الموبايل والتحكم بالشاشات الصغيرة (Mobile View Engine)
+       4. تبويبات الموبايل (Mobile View Engine)
        ========================================================================== */
     function setMobileTab(tab) {
       activeMobileTab = tab;
@@ -739,7 +971,7 @@
     }
 
     function initMobileView() {
-      const isMobile = window.innerWidth < 768; // md breakpoint
+      const isMobile = window.innerWidth < 768;
 
       const secContacts = document.getElementById('sectionContacts');
       const secMessage = document.getElementById('sectionMessage');
@@ -753,7 +985,6 @@
       const btnImport = document.getElementById('mTabImport');
 
       if (!isMobile) {
-        // في الديسكتوب والتابلت تظهر كل الأقسام كاملة
         secContacts.classList.remove('hidden');
         secMessage.classList.remove('hidden');
         secImport.classList.remove('hidden');
@@ -763,7 +994,6 @@
         return;
       }
 
-      // تنسيقات أزرار التبويبات بالموبايل
       const activeClass = 'py-2.5 px-2 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm';
       const inactiveClass = 'py-2.5 px-2 text-xs font-semibold rounded-xl transition flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
 
@@ -800,7 +1030,7 @@
     });
 
     /* ==========================================================================
-       4. محرر الرسائل والقوالب والمتغيرات (Message Composer)
+       5. محرر الرسائل والقوالب والمتغيرات (Message Composer)
        ========================================================================== */
     function setupEventListeners() {
       const pasteInput = document.getElementById('bulkPasteInput');
@@ -843,16 +1073,13 @@
       const charCounter = document.getElementById('charCounter');
       const previewTime = document.getElementById('previewTime');
 
-      // تحديث عداد الحروف والكلمات
       const chars = text.length;
       const words = text.trim() ? text.trim().split(/\s+/).length : 0;
       charCounter.textContent = `${chars} حرف | ~${words} كلمة`;
 
-      // تحديث وقت المعاينة
       const now = new Date();
       previewTime.textContent = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
 
-      // محاكاة الاستبدال
       if (!text.trim()) {
         previewEl.textContent = 'اكتب رسالتك بالأعلى لرؤية المعاينة هنا فوراً...';
         previewEl.className = 'break-words text-slate-400 italic';
@@ -881,38 +1108,37 @@
       currentMessage = msg;
       saveMessage();
 
-      // تصفير حالات الإرسال لجميع الأرقام لتبدأ الحملة بالرسالة الجديدة
-      contacts = contacts.map(c => ({ ...c, sent: false, sentAt: null }));
+      // تصفير حالات الإرسال لأرقام المجموعة النشطة
+      contacts = contacts.map(c => {
+        if (c.groupId === activeGroupId) {
+          return { ...c, sent: false, sentAt: null };
+        }
+        return c;
+      });
       saveContacts();
       render();
 
-      showToast('تم حفظ نص الرسالة وتصفير حالات الإرسال للجميع بنجاح!', 'success');
+      showToast('تم حفظ نص الرسالة وتصفير حالات الإرسال للمجموعة الحالية!', 'success');
       if (window.innerWidth < 768) {
-        setMobileTab('contacts'); // العودة التلقائية لقائمة الأرقام بالموبايل
+        setMobileTab('contacts');
       }
     }
 
     /* ==========================================================================
-       5. المعالجة الذكية وتنسيق الأرقام (Phone Engine & Formatter)
+       6. المعالجة الذكية وتنسيق الأرقام (Phone Engine & Formatter)
        ========================================================================== */
     function normalizePhoneNumber(rawPhone, defaultCountryCode) {
       if (!rawPhone) return null;
 
       let cleaned = rawPhone.toString().trim();
-      
       const arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
       cleaned = cleaned.replace(/[٠-٩]/g, d => arabicDigits.indexOf(d));
       cleaned = cleaned.replace(/[^0-9+]/g, '');
 
       if (!cleaned) return null;
 
-      if (cleaned.startsWith('+')) {
-        cleaned = cleaned.substring(1);
-      }
-      
-      if (cleaned.startsWith('00')) {
-        cleaned = cleaned.substring(2);
-      }
+      if (cleaned.startsWith('+')) cleaned = cleaned.substring(1);
+      if (cleaned.startsWith('00')) cleaned = cleaned.substring(2);
 
       if (defaultCountryCode === 'none') {
         return cleaned.length >= 7 ? cleaned : null;
@@ -945,15 +1171,12 @@
       return null;
     }
 
-    // دالة تنسيق رقم الهاتف ليظهر بمظهر مقروء وجميل
     function formatPhoneDisplay(phone) {
       if (!phone) return '';
       const s = phone.toString();
-      // مصر: 20 101 234 5678
       if (s.startsWith('20') && s.length === 12) {
         return `${s.slice(0,2)} ${s.slice(2,5)} ${s.slice(5,8)} ${s.slice(8)}`;
       }
-      // السعودية والإمارات: 966 50 123 4567
       if ((s.startsWith('966') || s.startsWith('971')) && s.length === 12) {
         return `${s.slice(0,3)} ${s.slice(3,5)} ${s.slice(5,8)} ${s.slice(8)}`;
       }
@@ -961,7 +1184,7 @@
     }
 
     /* ==========================================================================
-       6. الإدخال المجمّع والاستيراد (Bulk Paste & Import)
+       7. الإدخال المجمّع والاستيراد (Bulk Paste & Import)
        ========================================================================== */
     function switchAddTab(tab) {
       const bulkBtn = document.getElementById('tabBulkBtn');
@@ -993,10 +1216,24 @@
 
         let name = '';
         let rawPhone = '';
+        let notes = '';
 
         if (line.includes(',') || line.includes(';') || line.includes('\t')) {
           const parts = line.split(/[,;\t]/).map(p => p.trim());
-          if (parts.length >= 2) {
+          if (parts.length >= 3) {
+            // عمود 1 اسم، عمود 2 هاتف، عمود 3 ملاحظات (أو العكس)
+            const digits0 = (parts[0].match(/\d/g) || []).length;
+            const digits1 = (parts[1].match(/\d/g) || []).length;
+            if (digits0 >= digits1) {
+              rawPhone = parts[0];
+              name = parts[1];
+              notes = parts.slice(2).join(' - ');
+            } else {
+              name = parts[0];
+              rawPhone = parts[1];
+              notes = parts.slice(2).join(' - ');
+            }
+          } else if (parts.length === 2) {
             const digits0 = (parts[0].match(/\d/g) || []).length;
             const digits1 = (parts[1].match(/\d/g) || []).length;
             if (digits0 >= digits1) {
@@ -1009,7 +1246,11 @@
           }
         } else if (line.includes('-')) {
           const parts = line.split('-').map(p => p.trim());
-          if (parts.length >= 2) {
+          if (parts.length >= 3) {
+            name = parts[0];
+            rawPhone = parts[1];
+            notes = parts.slice(2).join(' - ');
+          } else if (parts.length === 2) {
             const digits0 = (parts[0].match(/\d/g) || []).length;
             const digits1 = (parts[1].match(/\d/g) || []).length;
             if (digits0 >= digits1) {
@@ -1039,10 +1280,14 @@
         const validPhone = normalizePhoneNumber(rawPhone, defaultCode);
         if (validPhone) {
           parsed.push({
+            id: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+            groupId: activeGroupId,
             name: name.trim() || '',
             phone: validPhone,
+            notes: notes.trim() || '',
             sent: false,
-            sentAt: null
+            sentAt: null,
+            suspended: false
           });
         }
       }
@@ -1072,31 +1317,31 @@
 
       let addedCount = 0;
       let duplicateCount = 0;
-      const existingPhones = new Set(contacts.map(c => c.phone));
+      const existingPhonesInGroup = new Set(contacts.filter(c => c.groupId === activeGroupId).map(c => c.phone));
 
       for (const item of parsedList) {
-        if (skipDuplicates && existingPhones.has(item.phone)) {
+        if (skipDuplicates && existingPhonesInGroup.has(item.phone)) {
           duplicateCount++;
           continue;
         }
+        item.groupId = activeGroupId;
         contacts.push(item);
-        existingPhones.add(item.phone);
+        existingPhonesInGroup.add(item.phone);
         addedCount++;
       }
 
       saveContacts();
+      renderGroupSelector();
       render();
 
       document.getElementById('bulkPasteInput').value = '';
       updateBulkCountPreview();
 
       if (addedCount > 0) {
-        showToast(`تم استيراد ${addedCount} جهة اتصال بنجاح! ${duplicateCount > 0 ? `(تم استبعاد ${duplicateCount} مكرر)` : ''}`, 'success');
-        if (window.innerWidth < 768) {
-          setMobileTab('contacts'); // التحويل المباشر لقائمة الأرقام
-        }
+        showToast(`تم استيراد ${addedCount} جهة اتصال إلى "${getActiveGroupName()}" بنجاح! ${duplicateCount > 0 ? `(تم استبعاد ${duplicateCount} مكرر)` : ''}`, 'success');
+        if (window.innerWidth < 768) setMobileTab('contacts');
       } else {
-        showToast('جميع الأرقام المدخلة موجودة مسبقاً في القائمة!', 'info');
+        showToast('جميع الأرقام موجودة مسبقاً في هذه المجموعة!', 'info');
       }
     }
 
@@ -1118,10 +1363,12 @@
     function processSingleAdd() {
       const nameInput = document.getElementById('singleName');
       const phoneInput = document.getElementById('singlePhone');
+      const notesInput = document.getElementById('singleNotes');
       const defaultCode = document.getElementById('defaultCountryCode').value;
 
       const name = nameInput.value.trim();
       const rawPhone = phoneInput.value.trim();
+      const notes = notesInput.value.trim();
 
       const validPhone = normalizePhoneNumber(rawPhone, defaultCode);
 
@@ -1131,33 +1378,123 @@
         return;
       }
 
-      const isDuplicate = contacts.some(c => c.phone === validPhone);
+      const isDuplicate = contacts.some(c => c.groupId === activeGroupId && c.phone === validPhone);
       if (isDuplicate) {
-        showToast('هذا الرقم مسجل بالفعل في القائمة!', 'warning');
+        showToast('هذا الرقم مسجل بالفعل في هذه المجموعة!', 'warning');
         return;
       }
 
       contacts.push({
+        id: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        groupId: activeGroupId,
         name: name,
         phone: validPhone,
+        notes: notes,
         sent: false,
-        sentAt: null
+        sentAt: null,
+        suspended: false
       });
 
       saveContacts();
+      renderGroupSelector();
       render();
 
       nameInput.value = '';
       phoneInput.value = '';
-      showToast(`تمت إضافة ${name || validPhone} بنجاح`, 'success');
+      notesInput.value = '';
+      showToast(`تمت إضافة ${name || validPhone} بنجاح إلى "${getActiveGroupName()}"`, 'success');
       
-      if (window.innerWidth < 768) {
-        setMobileTab('contacts');
+      if (window.innerWidth < 768) setMobileTab('contacts');
+    }
+
+    /* ==========================================================================
+       8. تعديل جهات الاتصال والملاحظات وتعليق الرقم (Edit & Suspension)
+       ========================================================================== */
+    function openEditContact(contactId) {
+      const contact = contacts.find(c => c.id === contactId);
+      if (!contact) return;
+
+      document.getElementById('editContactId').value = contact.id;
+      document.getElementById('editContactName').value = contact.name || '';
+      document.getElementById('editContactPhone').value = contact.phone || '';
+      document.getElementById('editContactNotes').value = contact.notes || '';
+      document.getElementById('editContactSuspended').checked = !!contact.suspended;
+
+      // تحديث قائمة المجموعات في النافذة
+      const groupSelect = document.getElementById('editContactGroup');
+      groupSelect.innerHTML = '';
+      groups.forEach(g => {
+        const opt = document.createElement('option');
+        opt.value = g.id;
+        opt.textContent = g.name;
+        if (g.id === contact.groupId) opt.selected = true;
+        groupSelect.appendChild(opt);
+      });
+
+      const modal = document.getElementById('editContactModal');
+      const box = document.getElementById('editModalBox');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      box.classList.remove('scale-95');
+    }
+
+    function closeEditModal() {
+      const modal = document.getElementById('editContactModal');
+      const box = document.getElementById('editModalBox');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      box.classList.add('scale-95');
+    }
+
+    function saveEditedContact(event) {
+      event.preventDefault();
+      const id = document.getElementById('editContactId').value;
+      const contact = contacts.find(c => c.id === id);
+      if (!contact) return;
+
+      const newName = document.getElementById('editContactName').value.trim();
+      const rawPhone = document.getElementById('editContactPhone').value.trim();
+      const newNotes = document.getElementById('editContactNotes').value.trim();
+      const newGroupId = document.getElementById('editContactGroup').value;
+      const isSuspended = document.getElementById('editContactSuspended').checked;
+
+      const cleanedPhone = rawPhone.replace(/[^0-9]/g, '');
+      if (cleanedPhone.length < 8) {
+        showToast('يرجى إدخال رقم هاتف صحيح!', 'warning');
+        return;
+      }
+
+      contact.name = newName;
+      contact.phone = cleanedPhone;
+      contact.notes = newNotes;
+      contact.groupId = newGroupId;
+      contact.suspended = isSuspended;
+
+      saveContacts();
+      closeEditModal();
+      renderGroupSelector();
+      render();
+
+      showToast('تم حفظ التعديلات بنجاح!', 'success');
+    }
+
+    // زر سريع للتعليق / التفعيل بضغطة واحدة
+    function toggleSuspendContact(contactId, event) {
+      if (event) event.stopPropagation();
+      const contact = contacts.find(c => c.id === contactId);
+      if (!contact) return;
+
+      contact.suspended = !contact.suspended;
+      saveContacts();
+      render();
+
+      if (contact.suspended) {
+        showToast(`تم تعليق واستبعاد الرقم: ${contact.name || contact.phone}`, 'info');
+      } else {
+        showToast(`تم تفعيل الرقم للإرسال: ${contact.name || contact.phone}`, 'success');
       }
     }
 
     /* ==========================================================================
-       7. عمليات الإرسال والروابط (WhatsApp Link & Sending)
+       9. عمليات الإرسال والروابط ومساعد الحملة (WhatsApp Link & Queue)
        ========================================================================== */
     function formatMessageForContact(template, contact) {
       if (!template) return '';
@@ -1167,14 +1504,14 @@
         .replace(/\{رقم\}|\{phone\}/gi, contact.phone);
     }
 
-    function sendMessage(index) {
+    function sendMessage(contactId) {
       if (!currentMessage.trim()) {
         showToast('يرجى حفظ نص الرسالة أولاً من قسم محرر الرسائل!', 'warning');
         if (window.innerWidth < 768) setMobileTab('message');
         return;
       }
 
-      const contact = contacts[index];
+      const contact = contacts.find(c => c.id === contactId);
       if (!contact) return;
 
       const customizedText = formatMessageForContact(currentMessage, contact);
@@ -1198,32 +1535,47 @@
         return;
       }
 
-      const nextIndex = contacts.findIndex(c => !c.sent);
-      if (nextIndex === -1) {
-        showToast('رائع! تم إرسال الرسائل لجميع جهات الاتصال في القائمة.', 'info');
+      // البحث عن الرقم التالي النشط في المجموعة الحالية (غير مرسل وغير معلق)
+      const nextContact = contacts.find(c => c.groupId === activeGroupId && !c.sent && !c.suspended);
+      if (!nextContact) {
+        const suspendedInGroup = contacts.filter(c => c.groupId === activeGroupId && !c.sent && c.suspended).length;
+        if (suspendedInGroup > 0) {
+          showToast(`تم إرسال كافة الأرقام النشطة! (يوجد ${suspendedInGroup} رقم معلق تم تخطيه).`, 'info');
+        } else {
+          showToast('رائع! تم إرسال الرسائل لجميع جهات الاتصال في هذه المجموعة.', 'info');
+        }
         return;
       }
 
-      sendMessage(nextIndex);
+      sendMessage(nextContact.id);
     }
 
     function resetAllStatuses() {
-      if (contacts.length === 0) return;
-      contacts = contacts.map(c => ({ ...c, sent: false, sentAt: null }));
+      const groupCount = contacts.filter(c => c.groupId === activeGroupId).length;
+      if (groupCount === 0) return;
+
+      contacts = contacts.map(c => {
+        if (c.groupId === activeGroupId) {
+          return { ...c, sent: false, sentAt: null };
+        }
+        return c;
+      });
+
       saveContacts();
       render();
-      showToast('تمت إعادة تعيين جميع الحالات إلى قيد الانتظار', 'info');
+      showToast('تمت إعادة تعيين جميع حالات الأرقام في المجموعة إلى قيد الانتظار', 'info');
     }
 
-    function deleteContact(index) {
-      contacts.splice(index, 1);
+    function deleteContact(contactId) {
+      contacts = contacts.filter(c => c.id !== contactId);
       saveContacts();
+      renderGroupSelector();
       render();
       showToast('تم حذف جهة الاتصال', 'info');
     }
 
     /* ==========================================================================
-       8. العرض والفلترة والبحث (Render & UI Engine)
+       10. العرض والفلترة والبحث المتقدم (Render & Enhanced Search)
        ========================================================================== */
     function setStatusFilter(status) {
       activeFilter = status;
@@ -1231,13 +1583,15 @@
       const allBtn = document.getElementById('filterAllBtn');
       const pendingBtn = document.getElementById('filterPendingBtn');
       const sentBtn = document.getElementById('filterSentBtn');
+      const suspendedBtn = document.getElementById('filterSuspendedBtn');
 
-      const activeClass = 'text-xs py-1.5 px-2 rounded-lg font-bold bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm transition';
-      const inactiveClass = 'text-xs py-1.5 px-2 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition';
+      const activeClass = 'text-[11px] sm:text-xs py-1.5 px-1 sm:px-2 rounded-lg font-bold bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm transition';
+      const inactiveClass = 'text-[11px] sm:text-xs py-1.5 px-1 sm:px-2 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition';
 
       allBtn.className = status === 'all' ? activeClass : inactiveClass;
       pendingBtn.className = status === 'pending' ? activeClass : inactiveClass;
       sentBtn.className = status === 'sent' ? activeClass : inactiveClass;
+      suspendedBtn.className = status === 'suspended' ? activeClass : inactiveClass;
 
       render();
     }
@@ -1248,49 +1602,62 @@
     }
 
     function render() {
-      // 1. حساب الإحصائيات الحية
-      const total = contacts.length;
-      const sentCount = contacts.filter(c => c.sent).length;
-      const pendingCount = total - sentCount;
-      const percent = total > 0 ? Math.round((sentCount / total) * 100) : 0;
+      // تصفية أرقام المجموعة النشطة
+      const currentGroupContacts = contacts.filter(c => c.groupId === activeGroupId);
+
+      const total = currentGroupContacts.length;
+      const sentCount = currentGroupContacts.filter(c => c.sent).length;
+      const suspendedCount = currentGroupContacts.filter(c => c.suspended).length;
+      // قيد الانتظار النشط (غير مرسل وغير معلق)
+      const pendingCount = currentGroupContacts.filter(c => !c.sent && !c.suspended).length;
+      const activeTotal = total - suspendedCount;
+      const percent = activeTotal > 0 ? Math.round((sentCount / activeTotal) * 100) : (total > 0 && sentCount === total ? 100 : 0);
 
       document.getElementById('statTotal').textContent = total;
       document.getElementById('statSent').textContent = sentCount;
       document.getElementById('statPending').textContent = pendingCount;
+      document.getElementById('statSuspendedText').textContent = `${suspendedCount} معلق`;
       document.getElementById('statPercentText').textContent = `${percent}%`;
       document.getElementById('statProgressBar').style.width = `${percent}%`;
       document.getElementById('listBadgeCount').textContent = total;
 
-      // تحديث عدادات الفلاتر وتبويب الموبايل
       const mTabCount = document.getElementById('mTabCount');
       if (mTabCount) mTabCount.textContent = total;
+
       document.getElementById('filterCountAll').textContent = total;
       document.getElementById('filterCountPending').textContent = pendingCount;
       document.getElementById('filterCountSent').textContent = sentCount;
+      document.getElementById('filterCountSuspended').textContent = suspendedCount;
 
-      // شريط الموبايل السفلي
+      // تحديث شريط الموبايل السفلي
       const stickyPending = document.getElementById('stickyPendingCount');
       const stickyButtonText = document.getElementById('stickyButtonText');
       if (stickyPending) stickyPending.textContent = pendingCount;
       if (stickyButtonText) {
-        const nextPendingContact = contacts.find(c => !c.sent);
-        if (nextPendingContact) {
-          const targetName = nextPendingContact.name || ('+' + nextPendingContact.phone);
+        const nextPending = currentGroupContacts.find(c => !c.sent && !c.suspended);
+        if (nextPending) {
+          const targetName = nextPending.name || ('+' + nextPending.phone);
           stickyButtonText.textContent = `إرسال التالي: ${targetName}`;
+        } else if (suspendedCount > 0 && sentCount + suspendedCount === total) {
+          stickyButtonText.textContent = `انتهت الأرقام النشطة (${suspendedCount} معلق)`;
         } else {
           stickyButtonText.textContent = `تم إرسال الكل بنجاح ✓`;
         }
       }
 
-      // 2. تطبيق البحث والفلتر
-      const filtered = contacts.map((c, originalIndex) => ({ ...c, originalIndex })).filter(item => {
+      // البحث والتصفية الموسعة
+      const filtered = currentGroupContacts.filter(item => {
+        // فلتر الحالة
         if (activeFilter === 'sent' && !item.sent) return false;
-        if (activeFilter === 'pending' && item.sent) return false;
+        if (activeFilter === 'pending' && (item.sent || item.suspended)) return false;
+        if (activeFilter === 'suspended' && !item.suspended) return false;
 
+        // فلتر البحث: يبحث في الاسم، رقم الهاتف، والملاحظات!
         if (searchQuery) {
           const matchName = item.name && item.name.toLowerCase().includes(searchQuery);
           const matchPhone = item.phone.includes(searchQuery);
-          if (!matchName && !matchPhone) return false;
+          const matchNotes = item.notes && item.notes.toLowerCase().includes(searchQuery);
+          if (!matchName && !matchPhone && !matchNotes) return false;
         }
 
         return true;
@@ -1316,53 +1683,75 @@
         return;
       }
 
-      // توليد الصفوف والبطاقات
       filtered.forEach((item, index) => {
-        const origIdx = item.originalIndex;
         const formattedPhone = formatPhoneDisplay(item.phone);
 
-        // بادج الحالة للديسكتوب
-        const statusBadgeDesktop = item.sent 
-          ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-               <i class="fa-solid fa-check text-[10px]"></i> تم الإرسال
-             </span>`
-          : `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-               <i class="fa-solid fa-hourglass-start text-[10px]"></i> قيد الانتظار
+        // بادج الحالة
+        let statusBadge = '';
+        if (item.suspended) {
+          statusBadge = `<span class="inline-flex items-center gap-1 text-[10px] font-bold text-red-700 dark:text-red-300 bg-red-100/80 dark:bg-red-950/70 px-2 py-0.5 rounded-md border border-red-200 dark:border-red-800">
+               <i class="fa-solid fa-pause text-[9px]"></i> معلّق (مستبعد)
              </span>`;
+        } else if (item.sent) {
+          statusBadge = `<span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-950/70 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
+               <i class="fa-solid fa-check text-[9px]"></i> تم الإرسال
+             </span>`;
+        } else {
+          statusBadge = `<span class="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-950/70 px-2 py-0.5 rounded-md border border-amber-200 dark:border-amber-800">
+               <i class="fa-solid fa-hourglass-start text-[9px]"></i> قيد الانتظار
+             </span>`;
+        }
 
         // 1. صف الديسكتوب (Desktop Table Row)
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition duration-150 group';
+        tr.className = `hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition duration-150 group ${item.suspended ? 'opacity-70 bg-slate-50/40 dark:bg-slate-900/40' : ''}`;
         tr.innerHTML = `
           <td class="py-3 px-4 text-center text-xs text-slate-400 font-mono">${index + 1}</td>
           <td class="py-3 px-4">
             <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-full ${item.sent ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'} flex items-center justify-center font-bold text-xs flex-shrink-0">
-                ${item.name ? item.name.charAt(0) : '<i class="fa-solid fa-phone text-[10px]"></i>'}
+              <div class="w-8 h-8 rounded-full ${item.suspended ? 'bg-red-100 text-red-600' : (item.sent ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300')} flex items-center justify-center font-bold text-xs flex-shrink-0">
+                ${item.suspended ? '<i class="fa-solid fa-pause text-xs"></i>' : (item.name ? item.name.charAt(0) : '<i class="fa-solid fa-phone text-[10px]"></i>')}
               </div>
-              <span class="font-semibold text-slate-800 dark:text-slate-100">${item.name || `<span class="font-mono text-xs text-slate-500" dir="ltr">+${formattedPhone}</span>`}</span>
+              <div>
+                <span class="font-semibold text-slate-800 dark:text-slate-100 block">${item.name || `<span class="font-mono text-xs text-slate-500" dir="ltr">+${formattedPhone}</span>`}</span>
+                ${item.notes ? `<span class="text-[11px] text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 px-1.5 py-0.5 rounded border border-amber-200/60 inline-flex items-center gap-1 mt-0.5"><i class="fa-solid fa-note-sticky text-[9px]"></i> ${item.notes}</span>` : ''}
+              </div>
             </div>
           </td>
           <td class="py-3 px-4 font-mono text-xs text-slate-600 dark:text-slate-300" dir="ltr">
             +${formattedPhone}
           </td>
           <td class="py-3 px-4 text-center">
-            ${statusBadgeDesktop}
+            ${statusBadge}
           </td>
           <td class="py-3 px-4 text-center text-xs text-slate-400 font-mono">
             ${item.sentAt || '--:--'}
           </td>
           <td class="py-3 px-4 text-center">
             <div class="inline-flex items-center gap-1.5">
-              ${item.sent 
-                ? `<button onclick="sendMessage(${origIdx})" class="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm" title="إعادة الإرسال">
-                     <i class="fa-solid fa-rotate-right text-[10px] text-emerald-600"></i> إعادة
-                   </button>`
-                : `<button onclick="sendMessage(${origIdx})" class="inline-flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm" title="إرسال عبر واتساب">
-                     <i class="fa-brands fa-whatsapp"></i> إرسال
-                   </button>`
+              ${!item.suspended 
+                ? (item.sent 
+                    ? `<button onclick="sendMessage('${item.id}')" class="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg text-xs font-bold transition" title="إعادة الإرسال">
+                         <i class="fa-solid fa-rotate-right text-[10px] text-emerald-600"></i> إعادة
+                       </button>`
+                    : `<button onclick="sendMessage('${item.id}')" class="inline-flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-lg text-xs font-bold transition shadow-sm" title="إرسال عبر واتساب">
+                         <i class="fa-brands fa-whatsapp"></i> إرسال
+                       </button>`)
+                : `<span class="text-[11px] text-red-500 font-medium px-2 py-1">مستبعد</span>`
               }
-              <button onclick="deleteContact(${origIdx})" class="p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 transition" title="حذف">
+              
+              <!-- زر تعليق / تنشيط الرقم -->
+              <button onclick="toggleSuspendContact('${item.id}', event)" class="p-1.5 rounded-lg transition ${item.suspended ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'}" title="${item.suspended ? 'تنشيط الرقم للإرسال' : 'تعليق الرقم واستبعاده'}">
+                <i class="fa-solid ${item.suspended ? 'fa-play' : 'fa-pause'} text-xs"></i>
+              </button>
+
+              <!-- زر تعديل البيانات والملاحظات -->
+              <button onclick="openEditContact('${item.id}')" class="p-1.5 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/40 transition" title="تعديل البيانات والملاحظات">
+                <i class="fa-solid fa-pen text-xs"></i>
+              </button>
+
+              <!-- زر حذف -->
+              <button onclick="deleteContact('${item.id}')" class="p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 transition" title="حذف">
                 <i class="fa-solid fa-trash-can text-xs"></i>
               </button>
             </div>
@@ -1370,108 +1759,111 @@
         `;
         tableBody.appendChild(tr);
 
-        // 2. بطاقة الموبايل الذكية الأنيقة والمدمجة (Compact & Premium Mobile Card)
+        // 2. بطاقة الموبايل الذكية الأنيقة (Mobile Card)
         const card = document.createElement('div');
+        const isSuspended = item.suspended;
         const isSent = item.sent;
-        
-        card.className = `p-3 bg-white dark:bg-slate-900 rounded-2xl border ${isSent ? 'border-emerald-200/80 dark:border-emerald-900/40 bg-emerald-50/10' : 'border-slate-200/90 dark:border-slate-800'} shadow-sm flex items-center justify-between gap-2.5 transition active:scale-[0.99]`;
 
-        // عنوان جهة الاتصال
-        const mainTitle = item.name 
-          ? `<h4 class="font-bold text-sm text-slate-900 dark:text-white truncate leading-tight">${item.name}</h4>`
-          : `<h4 class="font-bold text-sm font-mono text-slate-800 dark:text-slate-100 tracking-wide leading-tight" dir="ltr">+${formattedPhone}</h4>`;
-
-        // سطر التفاصيل الصغير
-        const subDetails = item.name
-          ? `<span class="font-mono text-xs text-slate-400 dark:text-slate-400" dir="ltr">+${formattedPhone}</span>`
-          : `<span class="text-[11px] text-slate-400">عميل جديد</span>`;
-
-        // شارة الحالة المصغرة للموبايل
-        const mobileBadge = isSent 
-          ? `<span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100/70 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded-md">
-               <i class="fa-solid fa-check-double text-[8px]"></i> أرسل ${item.sentAt || ''}
-             </span>`
-          : `<span class="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-100/70 dark:bg-amber-950/60 px-1.5 py-0.5 rounded-md">
-               <i class="fa-solid fa-hourglass-start text-[8px]"></i> قيد الانتظار
-             </span>`;
+        card.className = `p-3 bg-white dark:bg-slate-900 rounded-2xl border ${
+          isSuspended ? 'border-red-200/70 dark:border-red-900/40 bg-red-50/10' : (isSent ? 'border-emerald-200/80 dark:border-emerald-900/40 bg-emerald-50/10' : 'border-slate-200/90 dark:border-slate-800')
+        } shadow-sm space-y-2 transition`;
 
         card.innerHTML = `
-          <!-- الجانب الأيمن: الأيقونة والبيانات -->
-          <div class="flex items-center gap-2.5 min-w-0 flex-1">
+          <div class="flex items-center justify-between gap-2">
             
-            <!-- الصورة الرمزية -->
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs flex-shrink-0 ${
-              isSent 
-                ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/30' 
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700'
-            }">
-              ${isSent 
-                ? '<i class="fa-solid fa-check text-sm"></i>' 
-                : (item.name ? item.name.charAt(0) : '<i class="fa-solid fa-phone text-emerald-600 text-xs"></i>')
+            <!-- معلومات الاتصال -->
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs flex-shrink-0 ${
+                isSuspended 
+                  ? 'bg-red-100 dark:bg-red-950/70 text-red-600' 
+                  : (isSent ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300')
+              }">
+                ${isSuspended ? '<i class="fa-solid fa-pause text-xs"></i>' : (isSent ? '<i class="fa-solid fa-check text-sm"></i>' : (item.name ? item.name.charAt(0) : '<i class="fa-solid fa-phone text-emerald-600 text-xs"></i>'))}
+              </div>
+
+              <div class="min-w-0 flex-1">
+                <h4 class="font-bold text-sm text-slate-900 dark:text-white truncate ${!item.name ? 'font-mono text-[13px]' : ''}" ${!item.name ? 'dir="ltr"' : ''}>
+                  ${item.name || ('+' + formattedPhone)}
+                </h4>
+                <div class="flex items-center gap-1.5 mt-0.5 text-xs">
+                  ${item.name ? `<span class="font-mono text-[11px] text-slate-400" dir="ltr">+${formattedPhone}</span><span class="text-slate-300">•</span>` : ''}
+                  ${statusBadge}
+                </div>
+              </div>
+            </div>
+
+            <!-- أزرار الإجراء السريع بالموبايل -->
+            <div class="flex items-center gap-1 flex-shrink-0">
+              ${!isSuspended 
+                ? (isSent 
+                    ? `<button onclick="sendMessage('${item.id}')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 active:scale-95 transition" title="إعادة">
+                         <i class="fa-solid fa-rotate-right text-[10px] text-emerald-600"></i> إعادة
+                       </button>`
+                    : `<button onclick="sendMessage('${item.id}')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-600/30 active:scale-95 transition flex items-center gap-1">
+                         <i class="fa-brands fa-whatsapp text-sm"></i> إرسال
+                       </button>`)
+                : `<span class="text-[10px] font-bold text-red-500 bg-red-50 dark:bg-red-950/40 px-2 py-1 rounded-lg">معلّق</span>`
               }
-            </div>
 
-            <!-- معلومات الاسم والرقم والحالة -->
-            <div class="min-w-0 flex-1">
-              <div class="flex items-center gap-2">
-                ${mainTitle}
-              </div>
-              <div class="flex items-center gap-2 mt-0.5">
-                ${subDetails}
-                <span class="text-slate-300 dark:text-slate-700">•</span>
-                ${mobileBadge}
-              </div>
+              <!-- زر تعديل -->
+              <button onclick="openEditContact('${item.id}')" class="w-7 h-7 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 flex items-center justify-center transition">
+                <i class="fa-solid fa-pen text-xs"></i>
+              </button>
+
+              <!-- زر تعليق / تشغيل -->
+              <button onclick="toggleSuspendContact('${item.id}', event)" class="w-7 h-7 rounded-lg ${isSuspended ? 'text-emerald-600 bg-emerald-50' : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'} flex items-center justify-center transition" title="${isSuspended ? 'تفعيل' : 'تعليق'}">
+                <i class="fa-solid ${isSuspended ? 'fa-play' : 'fa-pause'} text-xs"></i>
+              </button>
+
+              <!-- زر حذف -->
+              <button onclick="deleteContact('${item.id}')" class="w-7 h-7 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
             </div>
 
           </div>
 
-          <!-- الجانب الأيسر: زر الإجراء الذكي وزر الحذف -->
-          <div class="flex items-center gap-1.5 flex-shrink-0">
-            ${isSent 
-              ? `<button onclick="sendMessage(${origIdx})" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition" title="إعادة الإرسال">
-                   <i class="fa-solid fa-rotate-right text-[10px] text-emerald-600"></i>
-                   <span>إعادة</span>
-                 </button>`
-              : `<button onclick="sendMessage(${origIdx})" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 shadow-sm shadow-emerald-600/30 active:scale-95 transition">
-                   <i class="fa-brands fa-whatsapp text-sm"></i>
-                   <span>إرسال</span>
-                 </button>`
-            }
-
-            <button onclick="deleteContact(${origIdx})" class="w-7 h-7 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center justify-center transition" title="حذف">
-              <i class="fa-solid fa-trash-can text-xs"></i>
-            </button>
-          </div>
+          <!-- إظهار الملاحظة إن وجدت بالموبايل -->
+          ${item.notes ? `
+            <div class="pt-1.5 border-t border-slate-100 dark:border-slate-800 text-[11px] text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-note-sticky text-[10px]"></i>
+              <span class="truncate">${item.notes}</span>
+            </div>
+          ` : ''}
         `;
         mobileCards.appendChild(card);
       });
     }
 
     /* ==========================================================================
-       9. تصدير البيانات وعينات التجربة (Export & Samples)
+       11. تصدير البيانات وعينات التجربة (Export & Samples)
        ========================================================================== */
     function exportToCSV() {
-      if (contacts.length === 0) {
-        showToast('لا توجد بيانات لتصديرها!', 'warning');
+      const currentGroupContacts = contacts.filter(c => c.groupId === activeGroupId);
+      if (currentGroupContacts.length === 0) {
+        showToast('لا توجد بيانات لتصديرها في هذه المجموعة!', 'warning');
         return;
       }
 
       let csvContent = "\uFEFF";
-      csvContent += "الاسم,رقم الهاتف,الحالة,وقت الإرسال\n";
+      csvContent += "المجموعة,الاسم,رقم الهاتف,الملاحظات,الحالة,معلق,وقت الإرسال\n";
 
-      contacts.forEach(c => {
+      currentGroupContacts.forEach(c => {
+        const groupName = `"${getActiveGroupName().replace(/"/g, '""')}"`;
         const name = `"${(c.name || '').replace(/"/g, '""')}"`;
         const phone = `"+${c.phone}"`;
+        const notes = `"${(c.notes || '').replace(/"/g, '""')}"`;
         const status = c.sent ? "تم الإرسال" : "قيد الانتظار";
+        const suspended = c.suspended ? "نعم" : "لا";
         const time = c.sentAt || "";
-        csvContent += `${name},${phone},${status},${time}\n`;
+        csvContent += `${groupName},${name},${phone},${notes},${status},${suspended},${time}\n`;
       });
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
-      link.setAttribute("download", `whatsapp_campaign_${new Date().toISOString().slice(0,10)}.csv`);
+      link.setAttribute("download", `whatsapp_${getActiveGroupName()}_${new Date().toISOString().slice(0,10)}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -1481,11 +1873,11 @@
 
     function loadSampleData() {
       const samples = [
-        { name: "المهندس أحمد سمير", phone: "201012345671", sent: false, sentAt: null },
-        { name: "سارة عبد الرحمن", phone: "201098765432", sent: false, sentAt: null },
-        { name: "", phone: "201123456789", sent: false, sentAt: null },
-        { name: "شركة النور للبرمجيات", phone: "201287654321", sent: true, sentAt: "10:15 ص" },
-        { name: "", phone: "201555554321", sent: false, sentAt: null }
+        { id: 'c_s1', groupId: activeGroupId, name: "المهندس أحمد سمير", phone: "201012345671", notes: "طلب خصم خاص للمجموعة", sent: false, sentAt: null, suspended: false },
+        { id: 'c_s2', groupId: activeGroupId, name: "سارة عبد الرحمن", phone: "201098765432", notes: "تواصل في الصباح فقط", sent: false, sentAt: null, suspended: false },
+        { id: 'c_s3', groupId: activeGroupId, name: "محمود فؤاد", phone: "201123456789", notes: "طلب تأجيل التواصل للأسبوع القادم", sent: false, sentAt: null, suspended: true },
+        { id: 'c_s4', groupId: activeGroupId, name: "شركة النور للبرمجيات", phone: "201287654321", notes: "عميل VIP", sent: true, sentAt: "10:15 ص", suspended: false },
+        { id: 'c_s5', groupId: activeGroupId, name: "", phone: "201555554321", notes: "", sent: false, sentAt: null, suspended: false }
       ];
 
       contacts = [...contacts, ...samples];
@@ -1496,15 +1888,14 @@
         updateMessagePreview();
       }
 
+      renderGroupSelector();
       render();
-      showToast('تمت إضافة 5 أرقام تجريبية لتجربة التطبيق!', 'success');
-      if (window.innerWidth < 768) {
-        setMobileTab('contacts');
-      }
+      showToast('تمت إضافة 5 عينات (بينها رقم معلق وملاحظات) لتجربة المميزات الجديدة!', 'success');
+      if (window.innerWidth < 768) setMobileTab('contacts');
     }
 
     /* ==========================================================================
-       10. نظام التنبيهات المخصص (Custom Toast & Modal)
+       12. نظام التنبيهات والنوافذ المنبثقة (Toast & Modals)
        ========================================================================== */
     let confirmModalActive = false;
 
@@ -1545,18 +1936,20 @@
     }
 
     function confirmClearAll() {
-      if (contacts.length === 0) {
-        showToast('القائمة فارغة بالفعل!', 'info');
+      const groupContacts = contacts.filter(c => c.groupId === activeGroupId);
+      if (groupContacts.length === 0) {
+        showToast('هذه المجموعة فارغة بالفعل!', 'info');
         return;
       }
       openModal(
-        'مسح جميع جهات الاتصال؟',
-        'سيتم حذف جميع الأرقام المسجلة وسجل الإرسال بشكل نهائي. لا يمكن التراجع عن هذا الإجراء.',
+        `مسح جميع جهات اتصال "${getActiveGroupName()}"؟`,
+        'سيتم حذف أرقام هذه المجموعة وسجل الإرسال بشكل نهائي. لا يمكن التراجع عن هذا الإجراء.',
         () => {
-          contacts = [];
+          contacts = contacts.filter(c => c.groupId !== activeGroupId);
           saveContacts();
+          renderGroupSelector();
           render();
-          showToast('تم مسح جميع جهات الاتصال', 'info');
+          showToast('تم مسح أرقام المجموعة الحالية', 'info');
         }
       );
     }
