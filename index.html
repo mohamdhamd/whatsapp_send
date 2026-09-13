@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>WhatsApp BulkSender Pro | مرسل رسائل واتساب الاحترافي</title>
+  <title>بَلِّغْ | إرسال رسائل وتس</title>
+  
+  <!-- أيقونة الموقع Favicon (سبحان الله) -->
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" href="favicon.png">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   
   <!-- خط Cairo الأنيق من Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -129,15 +134,12 @@
         </div>
         <div>
           <div class="flex items-center gap-1.5">
-            <h1 class="text-sm sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white">
-              WhatsApp Sender <span class="text-emerald-500 font-extrabold">PRO</span>
+            <h1 class="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
+              بَلِّغْ <span class="text-emerald-500 font-extrabold text-xs px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800">PRO</span>
             </h1>
-            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-              v3.0
-            </span>
           </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">
-            مجموعات متعددة، تخصيص ملاحظات، استبعاد أرقام، وإرسال مجمّع ذكي
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            إرسال رسائل وتس
           </p>
         </div>
       </div>
@@ -148,13 +150,9 @@
           <i id="themeIcon" class="fa-solid fa-moon text-base"></i>
         </button>
 
-        <button onclick="exportToCSV()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="تصدير الأرقام والحالة إلى ملف CSV">
+        <button onclick="exportToCSV()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="تصدير الأرقام والحالة إلى ملف CSV">
           <i class="fa-solid fa-file-arrow-down text-emerald-600"></i>
           <span>تصدير CSV</span>
-        </button>
-
-        <button onclick="loadSampleData()" class="text-xs font-bold px-2.5 sm:px-3 py-2 rounded-xl text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition" title="شحن بيانات تجريبية لاختبار المنظومة">
-          <i class="fa-solid fa-wand-magic-sparkles ml-1"></i> <span class="hidden xs:inline">عينة تجريبية</span><span class="xs:hidden">عينة</span>
         </button>
       </div>
 
@@ -163,6 +161,30 @@
 
   <!-- ==================== المحتوى الرئيسي (Main Container) ==================== -->
   <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6">
+
+    <!-- ================= شريط النفحات والآيات النبوية (Spiritual Quotes Banner) ================= -->
+    <section class="flex items-center justify-center w-full">
+      <div class="w-full max-w-3xl py-2 px-3.5 sm:px-5 rounded-full bg-gradient-to-r from-amber-50 via-amber-100/50 to-amber-50 dark:from-amber-950/40 dark:via-amber-900/30 dark:to-amber-950/40 border border-amber-300 dark:border-amber-700/80 shadow-sm flex items-center justify-between gap-2.5 transition-all duration-300 hover:shadow-md">
+        
+        <!-- زر التبديل الدائري على اليسار (Refresh Quote) -->
+        <button onclick="nextSpiritualQuote(true)" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-amber-200/60 dark:bg-amber-900/60 hover:bg-amber-300/80 text-amber-800 dark:text-amber-200 flex items-center justify-center transition-all duration-300 flex-shrink-0 active:scale-95 shadow-xs" title="اقتباس آخر">
+          <i id="quoteRefreshIcon" class="fa-solid fa-rotate text-xs transition-transform duration-500"></i>
+        </button>
+
+        <!-- نص الاقتباس في المنتصف مع تأثير انتقال ناعم وتجاوب كامل -->
+        <div class="flex-1 text-center min-w-0 px-2">
+          <p id="spiritualQuoteText" class="text-xs sm:text-sm font-bold text-amber-950 dark:text-amber-100 tracking-wide transition-opacity duration-300 leading-relaxed">
+            ﴿ وَفِي السَّمَاءِ رِزْقُكُمْ وَمَا تُوعَدُونَ ﴾
+          </p>
+        </div>
+
+        <!-- أيقونة النجمة / البريق على اليمين كما في الصورة -->
+        <div class="text-amber-600 dark:text-amber-400 flex-shrink-0 text-sm sm:text-base">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </div>
+
+      </div>
+    </section>
 
     <!-- ================= شريط إدارة المجموعات المتعددة (Multi-Groups Bar) ================= -->
     <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-3 sm:p-4 shadow-card">
@@ -612,17 +634,70 @@
         </div>
         <h4 class="text-sm sm:text-base font-bold text-slate-800 dark:text-white mb-1">هذه المجموعة فارغة حالياً</h4>
         <p class="text-xs text-slate-400 max-w-sm mx-auto mb-4">
-          يمكنك لصق قائمة أرقام مجمعة من الإكسيل، أو نقل/إضافة جهات اتصال إليها.
+          يمكنك لصق قائمة أرقام مجمعة من الإكسيل، أو إضافة جهات اتصال جديدة إليها.
         </p>
-        <button onclick="loadSampleData()" class="inline-flex items-center gap-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl transition shadow">
-          <i class="fa-solid fa-wand-magic-sparkles"></i>
-          <span>تجربة أرقام تجريبية للتجربة</span>
+        <button onclick="switchAddTab('bulk'); if(window.innerWidth < 768) setMobileTab('import');" class="inline-flex items-center gap-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl transition shadow">
+          <i class="fa-solid fa-plus"></i>
+          <span>إضافة أرقام لهذه المجموعة الآن</span>
         </button>
       </div>
 
     </section>
 
   </main>
+
+  <!-- ==================== تذييل الصفحة الراقي (Modern Islamic-Inspired Footer) ==================== -->
+  <footer class="mt-8 pt-8 pb-12 border-t border-slate-200/80 dark:border-slate-800/80 bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center space-y-4">
+      
+      <!-- شارة الصلاة على النبي ﷺ بتصميم مبارك ومضيء -->
+      <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-bold shadow-sm transition hover:scale-105 duration-200">
+        <i class="fa-solid fa-kaaba text-emerald-600 text-xs"></i>
+        <span class="tracking-wide select-none">صلّ على النبي ﷺ</span>
+      </div>
+
+      <!-- أزرار التواصل الاجتماعي بأيقونات SVG الأصلية وتأثيرات ألوان الهوية -->
+      <div class="flex items-center justify-center gap-3">
+        
+        <!-- فيسبوك - محمد حمدي -->
+        <a href="https://www.facebook.com/m0hamedhamdy1/?locale=ar_AR" target="_blank" rel="noopener noreferrer" 
+           class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 text-slate-600 dark:text-slate-300 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] dark:hover:bg-[#1877F2] dark:hover:text-white flex items-center justify-center text-base transition-all duration-200 shadow-sm hover:scale-110 active:scale-95" 
+           title="فيسبوك - محمد حمدي">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+          </svg>
+        </a>
+
+        <!-- يوتيوب - Coding Keys -->
+        <a href="https://www.youtube.com/@coding-keys" target="_blank" rel="noopener noreferrer" 
+           class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 text-slate-600 dark:text-slate-300 hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000] dark:hover:bg-[#FF0000] dark:hover:text-white flex items-center justify-center text-base transition-all duration-200 shadow-sm hover:scale-110 active:scale-95" 
+           title="يوتيوب - Coding Keys">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-youtube">
+            <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"></path>
+            <path d="m10 15 5-3-5-3z"></path>
+          </svg>
+        </a>
+
+        <!-- لينكد إن - Mohamed Hamdey -->
+        <a href="https://www.linkedin.com/in/mohamed-hamdey/" target="_blank" rel="noopener noreferrer" 
+           class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 text-slate-600 dark:text-slate-300 hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] dark:hover:bg-[#0A66C2] dark:hover:text-white flex items-center justify-center text-base transition-all duration-200 shadow-sm hover:scale-110 active:scale-95" 
+           title="لينكد إن - Mohamed Hamdey">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-linkedin">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+            <rect width="4" height="12" x="2" y="9"></rect>
+            <circle cx="4" cy="4" r="2"></circle>
+          </svg>
+        </a>
+
+      </div>
+
+      <!-- نص حقوق الملكية الفكرية -->
+      <p class="text-xs text-slate-500 dark:text-slate-400 font-medium tracking-wide">
+        حقوق الطبع والنشر © محمد حمدي
+      </p>
+
+    </div>
+  </footer>
 
   <!-- ==================== شريط الإرسال العائم السفلي للموبايل (Mobile Sticky Bottom Bar) ==================== -->
   <div id="mobileStickyBar" class="fixed bottom-0 inset-x-0 z-30 p-2.5 sm:p-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/90 dark:border-slate-800 flex items-center justify-between gap-3 md:hidden shadow-lg">
@@ -746,11 +821,65 @@
       feedback: "مرحباً {الاسم} 🌟\nرأيك يهمنا جداً! نتمنى منك تقييم تجربتك الأخيرة معنا ومشاركتنا أي ملاحظات لتطوير خدماتنا."
     };
 
+    // مصفوفة الآيات والأحاديث النبوية الشريفة
+    const SPIRITUAL_QUOTES = [
+      "﴿ وَفِي السَّمَاءِ رِزْقُكُمْ وَمَا تُوعَدُونَ ﴾",
+      "﴿ وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا * وَيَرْزُقْهُ مِنْ حَيْثُ لَا يَحْتَسِبُ ﴾",
+      "قال ﷺ: «لَوْ أَنَّكُمْ كُنْتُمْ تَتَوَكَّلُونَ عَلَى اللَّهِ حَقَّ تَوَكُّلِهِ لَرُزِقْتُمْ كَمَا تُرْزَقُ الطَّيْرُ»",
+      "﴿ يَا أَيُّهَا النَّاسُ أَنتُمُ الْفُقَرَاءُ إِلَى اللَّهِ ۖ وَاللَّهُ هُوَ الْغَنِيُّ الْحَمِيدُ ﴾",
+      "﴿ وَأَن لَّيْسَ لِلْإِنسَانِ إِلَّا مَا سعى * وَأَنَّ سَعْيَهُ سَوْفَ يُرَىٰ ﴾",
+      "قال ﷺ: «إِنَّ الرُّوحَ الأَمِينَ نَفَثَ فِي رُوعِي أَنَّ نَفْسًا لَنْ تَمُوتَ حَتَّى تَسْتَوْفِيَ رِزْقَهَا»",
+      "﴿ الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ ۗ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ ﴾",
+      "قال ﷺ: «مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ»",
+      "﴿ رَّبِّ زِدْنِي عِلْمًا ﴾",
+      "قال ﷺ: «احْرِصْ عَلَى مَا يَنْفَعُكَ، وَاسْتَعِنْ بِاللَّهِ وَلَا تَعْجَزْ»"
+    ];
+
+    let spiritualQuoteIndex = Math.floor(Math.random() * SPIRITUAL_QUOTES.length);
+    let quoteAutoTimer = null;
+
+    function initSpiritualQuotes() {
+      showSpiritualQuote(spiritualQuoteIndex);
+      startQuoteAutoRotate();
+    }
+
+    function showSpiritualQuote(index) {
+      const quoteEl = document.getElementById('spiritualQuoteText');
+      if (!quoteEl) return;
+      quoteEl.classList.add('opacity-0');
+      setTimeout(() => {
+        quoteEl.textContent = SPIRITUAL_QUOTES[index];
+        quoteEl.classList.remove('opacity-0');
+      }, 200);
+    }
+
+    function nextSpiritualQuote(isManual = false) {
+      spiritualQuoteIndex = (spiritualQuoteIndex + 1) % SPIRITUAL_QUOTES.length;
+      showSpiritualQuote(spiritualQuoteIndex);
+
+      if (isManual) {
+        const icon = document.getElementById('quoteRefreshIcon');
+        if (icon) {
+          icon.classList.add('rotate-180');
+          setTimeout(() => icon.classList.remove('rotate-180'), 500);
+        }
+        startQuoteAutoRotate();
+      }
+    }
+
+    function startQuoteAutoRotate() {
+      if (quoteAutoTimer) clearInterval(quoteAutoTimer);
+      quoteAutoTimer = setInterval(() => {
+        nextSpiritualQuote(false);
+      }, 12000);
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       loadSettings();
       loadState();
       setupEventListeners();
       initMobileView();
+      initSpiritualQuotes();
       renderGroupSelector();
       render();
       updateMessagePreview();

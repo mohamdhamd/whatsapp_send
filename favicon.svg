@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#047857" />
+      <stop offset="50%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <filter id="textGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  
+  <!-- خلفية مربعة مستديرة الحواف باللون الزمردي الراقي -->
+  <rect width="64" height="64" rx="18" fill="url(#bgGrad)" />
+  
+  <!-- إطار إسلامي مزخرف وذهبي -->
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="none" stroke="#fef08a" stroke-width="1.2" opacity="0.75" stroke-dasharray="4 2" />
+  
+  <!-- نص 'سبحان الله' بخط عربي أصيل وواضح -->
+  <g filter="url(#textGlow)">
+    <text x="32" y="38" font-family="'Cairo', 'Amiri', 'Scheherazade New', 'Tahoma', sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">
+      سُبْحَانَ ٱللَّٰه
+    </text>
+  </g>
+</svg>
